@@ -36,8 +36,20 @@ https://simulation.loopnopalsolutions.xyz
 6. Google will ask you to verify domain ownership.
 7. In Porkbun DNS, add the TXT verification record Google provides.
 8. Return to Google Sites and finish verification.
-9. In Porkbun DNS, add the CNAME Google provides for `www`.
+9. In Porkbun DNS, add this CNAME:
+
+```text
+Type: CNAME
+Host: www
+Answer/Value: ghs.googlehosted.com
+TTL: Automatic or 3600
+```
+
 10. Publish the site again.
+
+Google Sites custom URLs require a subdomain such as `www`. To make the root domain
+`loopnopalsolutions.xyz` work too, use Porkbun URL forwarding from the root domain to
+`https://www.loopnopalsolutions.xyz/`.
 
 ## Point the Simulation Subdomain
 
@@ -73,4 +85,3 @@ https://simulation.loopnopalsolutions.xyz/
 ```
 
 7. Publish the Google Site.
-
