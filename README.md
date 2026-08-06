@@ -23,10 +23,13 @@ LoopNopalSolutions/
 The HTML simulation is in:
 
 ```text
-Simulacion_HTML/index.html
+Simulacion_HTML/v4_standalone_upgrade.html
 ```
 
-It can be published as a static frontend at a URL such as:
+`Simulacion_HTML/index.html` mirrors V4 as the main static entry point. V1 and
+V2 remain available as historical standalone versions.
+
+The current public deployment is:
 
 ```text
 https://simulation.loopnopalsolutions.xyz/
@@ -58,4 +61,3 @@ Python API (FastAPI)
 3. Deploy `Simulacion_HTML/` to a static host.
 4. Point `simulation.loopnopalsolutions.xyz` to the static host.
 5. Add the simulation link button to the official Google Site.
-

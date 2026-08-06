@@ -1,12 +1,12 @@
 const simulations = [
   {
     id: "01",
-    title: "Experiencia completa",
+    title: "Comparativa actual vs optimizada",
     description:
-      "Las tres etapas del proyecto en una sola interfaz: consola clasica, modelo de 24 horas y tablero interactivo.",
-    href: "/simulaciones/index.html",
-    meta: "V1 + V2 + V3",
-    accent: "green",
+      "Compara el plan actual con una propuesta optimizada mediante ciclos, metricas y congestion a lo largo del dia.",
+    href: "/simulaciones/v4.html",
+    meta: "Version 4",
+    accent: "blue",
   },
   {
     id: "02",
@@ -25,15 +25,6 @@ const simulations = [
     href: "/simulaciones/v2.html",
     meta: "Version 2",
     accent: "red",
-  },
-  {
-    id: "04",
-    title: "Cruce interactivo",
-    description:
-      "Tablero visual con estados del cruce, demanda por acceso y grafica de congestion.",
-    href: "/simulaciones/v3.html",
-    meta: "Version 3",
-    accent: "blue",
   },
 ];
 
@@ -91,14 +82,6 @@ export default function Home() {
           <div className="hero-actions">
             <a className="button button-primary" href="#simulaciones">
               Explorar simulaciones
-            </a>
-            <a
-              className="button button-secondary"
-              href="/simulaciones/v3.html"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Abrir tablero <span aria-hidden="true">↗</span>
             </a>
           </div>
         </div>
@@ -196,7 +179,7 @@ export default function Home() {
           <span>Loop Nopal Solutions</span>
         </a>
         <p>Movilidad urbana, medida y simulada.</p>
-        <p>Queretaro, Mexico</p>
+        <p>Queretaro, Qro, Mexico</p>
       </footer>
     </main>
   );

@@ -24,10 +24,12 @@ test("renders the company site and simulation launchers", async () => {
   assert.match(html, /Loop Nopal Solutions/);
   assert.match(html, /Simulaciones ejecutables/);
   assert.match(html, /target="_blank"/);
-  assert.match(html, /\/simulaciones\/index\.html/);
+  assert.match(html, /\/simulaciones\/v4\.html/);
   assert.match(html, /\/simulaciones\/v1\.html/);
   assert.match(html, /\/simulaciones\/v2\.html/);
-  assert.match(html, /\/simulaciones\/v3\.html/);
+  assert.doesNotMatch(html, /\/simulaciones\/(?:index|v3)\.html/);
+  assert.doesNotMatch(html, /Abrir tablero|V1 \+ V2 \+ V3/);
+  assert.match(html, /Queretaro, Qro, Mexico/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/);
 });
 
@@ -37,6 +39,8 @@ test("ships every standalone simulation and the social image", async () => {
     access(new URL("public/simulaciones/index.html", root)),
     access(new URL("public/simulaciones/v1.html", root)),
     access(new URL("public/simulaciones/v2.html", root)),
-    access(new URL("public/simulaciones/v3.html", root)),
+    access(new URL("public/simulaciones/v4.html", root)),
   ]);
+
+  await assert.rejects(access(new URL("public/simulaciones/v3.html", root)));
 });

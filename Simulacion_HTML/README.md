@@ -6,10 +6,10 @@ Main simulation entry point:
 index.html
 ```
 
+`index.html` mirrors the current V4 simulation.
+
 Included source versions:
 
-- `simulador_combinado.html`
 - `v1_standalone.html`
 - `v2_standalone.html`
-- `v3_standalone.html`
-
+- `v4_standalone_upgrade.html`
