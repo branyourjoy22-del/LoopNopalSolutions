@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador cruce Sombrerete - 3 versiones</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --bg: #14171b;
+    --panel: #1c2126;
+    --panel-2: #21262c;
+    --border: #2c333b;
+    --text: #edeae3;
+    --muted: #8b93a1;
+    --verde: #3ddc84;
+    --amarillo: #ffc145;
+    --rojo: #ff5a5f;
+    --naranja: #ff8a3d;
+    --azul-bus: #4ea1ff;
+    --pico-glow: #ff8a3d;
+  }
+  *{ box-sizing:border-box; }
+  html,body{
+    margin:0; padding:0; background:var(--bg); color:var(--text);
+    font-family:'Space Grotesk', system-ui, sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{ font-family:'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; }
+
+  .app{ max-width:1180px; margin:0 auto; padding:20px 20px 60px; }
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between;
+    padding:18px 22px; background:var(--panel); border:1px solid var(--border);
+    border-radius:14px; margin-bottom:16px;
+  }
+  .titulo{ display:flex; flex-direction:column; gap:2px; }
+  .titulo h1{ margin:0; font-size:1.15rem; font-weight:700; letter-spacing:.2px; }
+  .titulo span{ color:var(--muted); font-size:.8rem; }
+  .reloj-wrap{ display:flex; align-items:center; gap:14px; }
+  .reloj{ font-size:2rem; font-weight:600; letter-spacing:1px; }
+  .badge{
+    padding:6px 12px; border-radius:999px; font-size:.75rem; font-weight:600;
+    border:1px solid var(--border); color:var(--muted); background:var(--panel-2);
+    white-space:nowrap;
+  }
+  .badge.pico{
+    color:#1a1200; background:var(--pico-glow); border-color:var(--pico-glow);
+    animation: pulso 1.6s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce){ .badge.pico{ animation:none; } }
+  @keyframes pulso{ 0%,100%{ opacity:1; } 50%{ opacity:.55; } }
+
+  /* ---------- controls ---------- */
+  .controles{
+    display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center;
+    padding:14px 18px; background:var(--panel); border:1px solid var(--border);
+    border-radius:14px; margin-bottom:16px; font-size:.85rem;
+  }
+  .controles label{ color:var(--muted); display:flex; align-items:center; gap:6px; }
+  button, input[type=time]{
+    font-family:inherit; font-size:.85rem; color:var(--text);
+    background:var(--panel-2); border:1px solid var(--border); border-radius:8px;
+    padding:8px 12px; cursor:pointer;
+  }
+  button:hover{ border-color:var(--muted); }
+  button:focus-visible, input:focus-visible, select:focus-visible{
+    outline:2px solid var(--azul-bus); outline-offset:2px;
+  }
+  button.activo{ border-color:var(--verde); color:var(--verde); }
+  select{
+    font-family:inherit; font-size:.85rem; color:var(--text);
+    background:var(--panel-2); border:1px solid var(--border); border-radius:8px; padding:8px 10px;
+  }
+  .separador{ width:1px; align-self:stretch; background:var(--border); margin:0 2px; }
+
+  /* ---------- grid principal ---------- */
+  .grid{ display:grid; grid-template-columns: 1.05fr 1.3fr; gap:16px; }
+  @media (max-width: 880px){ .grid{ grid-template-columns:1fr; } }
+
+  .panel{
+    background:var(--panel); border:1px solid var(--border); border-radius:14px;
+    padding:18px; overflow:hidden;
+  }
+  .panel h2{ margin:0 0 4px; font-size:.95rem; }
+  .panel .sub{ margin:0 0 14px; color:var(--muted); font-size:.78rem; }
+
+  /* ---------- esquema del cruce ---------- */
+  #v3_schematic{ width:100%; height:auto; display:block; }
+  .fase-actual{
+    margin-top:10px; padding:10px 12px; border-radius:10px; background:var(--panel-2);
+    border:1px solid var(--border); font-size:.85rem; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;
+  }
+  .fase-actual b{ color:var(--text); }
+
+  table.movs{ width:100%; border-collapse:collapse; margin-top:14px; font-size:.78rem; }
+  table.movs th{ text-align:left; color:var(--muted); font-weight:600; padding:4px 6px; border-bottom:1px solid var(--border); }
+  table.movs td{ padding:6px 6px; border-bottom:1px solid #23282f; vertical-align:middle; }
+  .luz-dot{ width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:6px; vertical-align:middle; }
+  .nivel{ padding:2px 8px; border-radius:999px; font-size:.68rem; font-weight:700; }
+
+  /* ---------- gráfica ---------- */
+  #v3_chartCanvas{ width:100%; height:auto; display:block; border-radius:10px; }
+  .leyenda-chart{ display:flex; flex-wrap:wrap; gap:10px 16px; margin-top:10px; font-size:.75rem; color:var(--muted); }
+  .leyenda-chart span{ display:inline-flex; align-items:center; gap:6px; }
+  .swatch{ width:18px; height:0; border-top-width:3px; border-top-style:solid; display:inline-block; }
+  .swatch.pico{ width:12px; height:12px; border-radius:3px; border:none; background:var(--pico-glow); opacity:.35; }
+
+  footer.nota{
+    margin-top:16px; color:var(--muted); font-size:.75rem; text-align:center; line-height:1.5;
+  }
+
+  /* ---------- shell / tabs (namespaced con prefijo sb-) ---------- */
+  .sb-intro{
+    background:var(--panel); border:1px solid var(--border); border-radius:14px;
+    padding:16px 20px; margin-bottom:14px; font-size:.85rem; color:var(--muted); line-height:1.55;
+  }
+  .sb-intro b{ color:var(--text); }
+  .sb-tabs{
+    display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;
+  }
+  .sb-tab-btn{
+    font-family:'Space Grotesk', sans-serif; font-size:.82rem; font-weight:600; color:var(--muted);
+    background:var(--panel-2); border:1px solid var(--border); border-radius:10px;
+    padding:10px 16px; cursor:pointer;
+  }
+  .sb-tab-btn:hover{ border-color:var(--muted); color:var(--text); }
+  .sb-tab-btn.activo{ border-color:var(--verde); color:var(--verde); background:var(--panel); }
+  .sb-panel{ display:none; }
+  .sb-panel.activo{ display:block; }
+
+  .sb-term-wrap{
+    background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:18px; margin-bottom:14px;
+  }
+  .sb-term-controles{
+    display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; margin-bottom:14px; font-size:.85rem;
+  }
+  .sb-term-controles label{ color:var(--muted); display:flex; align-items:center; gap:6px; }
+  .sb-terminal{
+    background:#0e1013; border:1px solid var(--border); border-radius:10px;
+    padding:16px 18px; font-family:'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+    font-size:.8rem; line-height:1.65; white-space:pre; overflow-x:auto; color:var(--text);
+  }
+  .c-verde{ color:var(--verde); font-weight:700; }
+  .c-amarillo{ color:var(--amarillo); font-weight:700; }
+  .c-rojo{ color:var(--rojo); font-weight:700; }
+  .c-naranja{ color:var(--naranja); font-weight:700; }
+  .sb-nota{ margin-top:14px; color:var(--muted); font-size:.75rem; text-align:center; line-height:1.5; }
+
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="sb-intro">
+    <b>Simulacion del cruce Av. Sombrerete - Calle 6 - Av. Praxedis Guerrero (Queretaro).</b><br>
+    Tres etapas del mismo proyecto: la version de consola original, la version de consola con reloj de 24h
+    y congestion simulada, y la version web interactiva final.
+  </div>
+
+  <div class="sb-tabs">
+    <button class="sb-tab-btn activo" data-target="tab-v1">V1 - Consola clasica</button>
+    <button class="sb-tab-btn" data-target="tab-v2">V2 - Consola avanzada (24h)</button>
+    <button class="sb-tab-btn" data-target="tab-v3">V3 - Web interactiva</button>
+  </div>
+
+  <!-- ============ V1 ============ -->
+  <section id="tab-v1" class="sb-panel activo">
+    <div class="sb-term-wrap">
+      <div class="sb-term-controles">
+        <button id="v1_btnPlay">⏸ Pausar</button>
+        <label>Velocidad
+          <select id="v1_velocidad">
+            <option value="1.0">1.0 (tiempo real)</option>
+            <option value="0.5" selected>0.5 (2x)</option>
+            <option value="0.1">0.1 (demo, 10x)</option>
+          </select>
+        </label>
+      </div>
+      <div class="sb-terminal" id="v1_terminal"></div>
+      <div id="v1_ciclo"></div>
+    </div>
+    <div class="sb-nota">Ciclo de 100 s, 6 fases. Replica visual del script de consola original.</div>
+  </section>
+
+  <!-- ============ V2 ============ -->
+  <section id="tab-v2" class="sb-panel">
+    <div class="sb-term-wrap">
+      <div class="sb-term-controles">
+        <button id="v2_btnPlay">⏸ Pausar</button>
+        <label>Velocidad
+          <select id="v2_velocidad">
+            <option value="1">1x</option>
+            <option value="60" selected>60x</option>
+            <option value="300">300x</option>
+            <option value="900">900x</option>
+          </select>
+        </label>
+        <button id="v2_btnReiniciar">Reiniciar (06:00)</button>
+      </div>
+      <div class="sb-terminal" id="v2_terminal"></div>
+    </div>
+    <div class="sb-nota">Reloj de 24h, hora pico (7-9 AM / 5-7 PM) y congestion simulada por cola de vehiculos.</div>
+  </section>
+
+  <!-- ============ V3 ============ -->
+  <section id="tab-v3" class="sb-panel">
+
+<div class="app">
+
+  <header class="topbar">
+    <div class="titulo">
+      <h1>Cruce Av. Sombrerete · Calle 6 · Av. Praxedis Guerrero</h1>
+      <span>Simulación en vivo del ciclo semafórico y la congestión vehicular — Querétaro</span>
+    </div>
+    <div class="reloj-wrap">
+      <div class="reloj mono" id="v3_reloj">00:00:00</div>
+      <div class="badge" id="v3_badgePico">tráfico normal</div>
+    </div>
+  </header>
+
+  <section class="controles">
+    <button id="v3_btnPlay">⏸ Pausar</button>
+    <div class="separador"></div>
+    <label>Velocidad
+      <select id="v3_velocidad">
+        <option value="1">1×</option>
+        <option value="10">10×</option>
+        <option value="60" selected>60×</option>
+        <option value="300">300×</option>
+        <option value="900">900×</option>
+      </select>
+    </label>
+    <div class="separador"></div>
+    <button id="v3_btnPico1">Saltar a las 07:00 (pico AM)</button>
+    <button id="v3_btnPico2">Saltar a las 17:00 (pico PM)</button>
+    <div class="separador"></div>
+    <label>Iniciar en
+      <input type="time" id="v3_horaInicio" value="06:00">
+    </label>
+    <button id="v3_btnReiniciar">Reiniciar</button>
+  </section>
+
+  <main class="grid">
+    <div class="panel">
+      <h2>Estado del cruce</h2>
+      <p class="sub">Cada punto es un cabezal semafórico. El tamaño de la barra sobre cada acceso representa la cola de vehículos simulada.</p>
+      <svg id="v3_schematic" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"></svg>
+
+      <div class="fase-actual">
+        <div>Fase activa: <b id="v3_faseTexto">—</b></div>
+        <div>Segundo del ciclo: <b class="mono" id="v3_segundoCiclo">0</b>/100</div>
+      </div>
+
+      <table class="movs" id="v3_tablaMovs">
+        <thead>
+          <tr><th></th><th>Movimiento</th><th>Estado</th><th>Cola</th><th>Nivel</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h2>Congestión a lo largo del día</h2>
+      <p class="sub">Patrón simulado de 24 h (curva precalculada). La línea vertical muestra la hora actual de la simulación.</p>
+      <canvas id="v3_chartCanvas" width="900" height="360"></canvas>
+      <div class="leyenda-chart" id="v3_leyendaChart"></div>
+    </div>
+  </main>
+
+  <footer class="nota">
+    Fases y tiempos de luz tomados del diagrama y mapa mental proporcionados (ciclo de 100 s: F1–F6).
+    Las tasas de llegada de vehículos son simuladas para ilustrar el efecto de hora pico (7–9 AM y 5–7 PM);
+    no son conteos viales reales de Querétaro.
+  </footer>
+
+</div>
+
+
+  </section>
+
+</div>
+
+<script>
+
+(function(){
+  "use strict";
+  const btns = document.querySelectorAll('.sb-tab-btn');
+  const panels = document.querySelectorAll('.sb-panel');
+  btns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      btns.forEach(b=>b.classList.remove('activo'));
+      panels.forEach(p=>p.classList.remove('activo'));
+      btn.classList.add('activo');
+      document.getElementById(btn.dataset.target).classList.add('activo');
+    });
+  });
+})();
+
+(function(){
+  "use strict";
+  const term = document.getElementById('v1_terminal');
+  const cicloWrap = document.getElementById('v1_ciclo');
+  const velSel = document.getElementById('v1_velocidad');
+  const btnPlay = document.getElementById('v1_btnPlay');
+
+  const VERDE='VERDE', AMARILLO='AMARILLO', ROJO='ROJO';
+  const ICONO = {VERDE:'\u{1F7E2}', AMARILLO:'\u{1F7E1}', ROJO:'\u{1F534}'};
+  const CLASE = {VERDE:'c-verde', AMARILLO:'c-amarillo', ROJO:'c-rojo'};
+
+  const MOVIMIENTOS = [
+    ['somb_n_izq',    'Av. Sombrerete \u2191  (giro izquierdo protegido)'],
+    ['somb_n_frente', 'Av. Sombrerete \u2191  (de frente)'],
+    ['somb_s_frente', 'Av. Sombrerete \u2193  (de frente)'],
+    ['metrobus_n',    'Metrobus \u2191'],
+    ['metrobus_s',    'Metrobus \u2193'],
+    ['calle6',        'Calle 6'],
+    ['praxedis',      'Av. Praxedis Guerrero'],
+  ];
+  const AGENDA = {
+    somb_n_izq:    [[0,17,VERDE],[17,20,AMARILLO]],
+    somb_n_frente: [[0,37,VERDE],[37,40,AMARILLO]],
+    somb_s_frente: [[20,37,VERDE],[37,40,AMARILLO]],
+    metrobus_n:    [[40,47,VERDE],[47,50,AMARILLO]],
+    metrobus_s:    [[50,57,VERDE],[57,60,AMARILLO]],
+    calle6:        [[60,77,VERDE],[77,80,AMARILLO]],
+    praxedis:      [[80,97,VERDE],[97,100,AMARILLO]],
+  };
+  const FASES = [
+    [0,20,  'F1 - Sombrerete con giro protegido'],
+    [20,40, 'F2 - Sombrerete verde simultaneo'],
+    [40,50, 'F3 - Metrobus norte'],
+    [50,60, 'F4 - Metrobus sur'],
+    [60,80, 'F5 - Calle 6'],
+    [80,100,'F6 - Av. Praxedis Guerrero'],
+  ];
+  const CICLO_TOTAL = 100;
+
+  function estadoDe(mov,t){
+    for(const [ini,fin,color] of AGENDA[mov]){ if(t>=ini && t<fin) return color; }
+    return ROJO;
+  }
+  function faseDe(t){
+    for(const [ini,fin,nombre] of FASES){ if(t>=ini && t<fin) return nombre; }
+    return FASES[FASES.length-1][2];
+  }
+  function pad(n){ return String(n).padStart(3,' '); }
+
+  let t = 0, ciclo = 1, corriendo = true, timer = null;
+
+  function render(){
+    const filas = MOVIMIENTOS.map(([clave,etq])=>{
+      const color = estadoDe(clave,t);
+      return '  ' + ICONO[color] + '  ' + etq.padEnd(42,' ') + '<span class="'+CLASE[color]+'">'+color+'</span>';
+    }).join('\n');
+    term.innerHTML =
+'============================================================\n'+
+'  Cruce Av. Sombrerete - Calle 6 - Av. Praxedis Guerrero\n'+
+'============================================================\n'+
+'  Segundo del ciclo: '+pad(t)+' / '+CICLO_TOTAL+'\n'+
+'  Fase activa:       '+faseDe(t)+'\n'+
+'------------------------------------------------------------\n'+
+filas+'\n'+
+'============================================================\n'+
+'  Ciclo '+ciclo;
+  }
+
+  function tick(){
+    t++;
+    if(t>=CICLO_TOTAL){ t=0; ciclo++; }
+    render();
+  }
+
+  function velocidadMs(){ return parseFloat(velSel.value)*1000; }
+
+  function arrancar(){
+    clearInterval(timer);
+    timer = setInterval(tick, velocidadMs());
+  }
+
+  velSel.addEventListener('change', ()=>{ if(corriendo) arrancar(); });
+  btnPlay.addEventListener('click', ()=>{
+    corriendo = !corriendo;
+    btnPlay.textContent = corriendo ? '\u23F8 Pausar' : '\u25B6 Reanudar';
+    if(corriendo) arrancar(); else clearInterval(timer);
+  });
+
+  render();
+  arrancar();
+})();
+
+(function(){
+  "use strict";
+  const term = document.getElementById('v2_terminal');
+  const velSel = document.getElementById('v2_velocidad');
+  const btnPlay = document.getElementById('v2_btnPlay');
+  const btnReiniciar = document.getElementById('v2_btnReiniciar');
+
+  const VERDE='VERDE', AMARILLO='AMARILLO', ROJO='ROJO';
+  const ICONO = {VERDE:'\u{1F7E2}', AMARILLO:'\u{1F7E1}', ROJO:'\u{1F534}'};
+  const CLASE = {VERDE:'c-verde', AMARILLO:'c-amarillo', ROJO:'c-rojo'};
+  const CLASE_NIVEL = {BAJO:'c-verde', MEDIO:'c-amarillo', ALTO:'c-naranja', SATURADO:'c-rojo'};
+
+  const MOVIMIENTOS = [
+    ['somb_n_izq',    'Av. Sombrerete \u2191 (giro izq. protegido)'],
+    ['somb_n_frente', 'Av. Sombrerete \u2191 (de frente)'],
+    ['somb_s_frente', 'Av. Sombrerete \u2193 (de frente)'],
+    ['metrobus_n',    'Metrobus \u2191'],
+    ['metrobus_s',    'Metrobus \u2193'],
+    ['calle6',        'Calle 6'],
+    ['praxedis',      'Av. Praxedis Guerrero'],
+  ];
+  const AGENDA = {
+    somb_n_izq:    [[0,17,VERDE],[17,20,AMARILLO]],
+    somb_n_frente: [[0,37,VERDE],[37,40,AMARILLO]],
+    somb_s_frente: [[20,37,VERDE],[37,40,AMARILLO]],
+    metrobus_n:    [[40,47,VERDE],[47,50,AMARILLO]],
+    metrobus_s:    [[50,57,VERDE],[57,60,AMARILLO]],
+    calle6:        [[60,77,VERDE],[77,80,AMARILLO]],
+    praxedis:      [[80,97,VERDE],[97,100,AMARILLO]],
+  };
+  const FASES = [
+    [0,20,  'F1 - Sombrerete con giro protegido'],
+    [20,40, 'F2 - Sombrerete verde simultaneo'],
+    [40,50, 'F3 - Metrobus norte'],
+    [50,60, 'F4 - Metrobus sur'],
+    [60,80, 'F5 - Calle 6'],
+    [80,100,'F6 - Av. Praxedis Guerrero'],
+  ];
+  const CICLO_TOTAL = 100;
+  const HORAS_PICO = [[[7,0],[9,0]], [[17,0],[19,0]]];
+  const PARAMS = {
+    somb_n_izq:    {valle:0.05, pico:0.15, servicio:0.6, capacidad:12},
+    somb_n_frente: {valle:0.15, pico:0.45, servicio:0.9, capacidad:30},
+    somb_s_frente: {valle:0.12, pico:0.35, servicio:0.8, capacidad:25},
+    metrobus_n:    {valle:0.02, pico:0.04, servicio:1.0, capacidad:5},
+    metrobus_s:    {valle:0.02, pico:0.04, servicio:1.0, capacidad:5},
+    calle6:        {valle:0.05, pico:0.20, servicio:0.5, capacidad:15},
+    praxedis:      {valle:0.05, pico:0.20, servicio:0.5, capacidad:15},
+  };
+
+  function estadoDe(mov,t){
+    for(const [ini,fin,color] of AGENDA[mov]){ if(t>=ini && t<fin) return color; }
+    return ROJO;
+  }
+  function faseDe(t){
+    for(const [ini,fin,nombre] of FASES){ if(t>=ini && t<fin) return nombre; }
+    return FASES[FASES.length-1][2];
+  }
+  function esHoraPico(segDia){
+    const s=((segDia%86400)+86400)%86400, minutos=Math.floor(s/60);
+    return HORAS_PICO.some(([[h1,m1],[h2,m2]])=>{
+      const ini=h1*60+m1, fin=h2*60+m2; return minutos>=ini && minutos<fin;
+    });
+  }
+  function hhmmss(segDia){
+    const s=((segDia%86400)+86400)%86400;
+    const h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sec=Math.floor(s%60);
+    const p=n=>String(n).padStart(2,'0');
+    return p(h)+':'+p(m)+':'+p(sec);
+  }
+  function muestraPoisson(lam){
+    if(lam<=0) return 0;
+    const L=Math.exp(-lam); let k=0,pr=1;
+    do{ k++; pr*=Math.random(); } while(pr>L);
+    return k-1;
+  }
+  function nivelCongestion(cola,capacidad){
+    const r = capacidad? cola/capacidad : 0;
+    if(r<0.3) return 'BAJO';
+    if(r<0.7) return 'MEDIO';
+    if(r<1.2) return 'ALTO';
+    return 'SATURADO';
+  }
+
+  let colas = {}; Object.keys(PARAMS).forEach(k=>colas[k]=0);
+  let segDia = 6*3600;
+  let corriendo = true, timer = null;
+
+  function pasoSimulacion(tCiclo){
+    const pico = esHoraPico(segDia);
+    for(const clave in PARAMS){
+      const p = PARAMS[clave];
+      const tasa = pico ? p.pico : p.valle;
+      colas[clave]+=muestraPoisson(tasa);
+      if(estadoDe(clave,tCiclo)===VERDE) colas[clave]=Math.max(0,colas[clave]-p.servicio);
+      colas[clave]=Math.min(colas[clave], p.capacidad*3);
+    }
+  }
+
+  function pad(n){ return String(n).padStart(3,' '); }
+
+  function render(){
+    const tCiclo = ((segDia%CICLO_TOTAL)+CICLO_TOTAL)%CICLO_TOTAL;
+    const pico = esHoraPico(segDia);
+    const filas = MOVIMIENTOS.map(([clave,etq])=>{
+      const color = estadoDe(clave,tCiclo);
+      const cola = Math.round(colas[clave]);
+      const nivel = nivelCongestion(colas[clave], PARAMS[clave].capacidad);
+      return '  '+ICONO[color]+'  '+etq.padEnd(38,' ')+
+        '<span class="'+CLASE[color]+'">'+color.padEnd(9,' ')+'</span>'+
+        ' cola:'+String(cola).padStart(3,' ')+'  '+
+        '<span class="'+CLASE_NIVEL[nivel]+'">'+nivel+'</span>';
+    }).join('\n');
+    term.innerHTML =
+'============================================================\n'+
+'  Cruce Av. Sombrerete - Calle 6 - Av. Praxedis Guerrero\n'+
+'  (version avanzada: reloj 24h + congestion simulada)\n'+
+'============================================================\n'+
+'  Hora del dia:      '+hhmmss(segDia)+'   ['+(pico? '<span class="c-naranja">HORA PICO</span>':'trafico normal')+']\n'+
+'  Fase activa:       '+faseDe(tCiclo)+'\n'+
+'  Segundo del ciclo: '+pad(tCiclo)+' / '+CICLO_TOTAL+'\n'+
+'------------------------------------------------------------\n'+
+filas+'\n'+
+'============================================================';
+  }
+
+  function tick(){
+    const velocidad = parseInt(velSel.value,10);
+    for(let i=0;i<velocidad;i++){
+      const tCiclo = ((segDia%CICLO_TOTAL)+CICLO_TOTAL)%CICLO_TOTAL;
+      pasoSimulacion(tCiclo);
+      segDia++;
+    }
+    render();
+  }
+
+  function arrancar(){
+    clearInterval(timer);
+    timer = setInterval(tick, 1000);
+  }
+
+  btnPlay.addEventListener('click', ()=>{
+    corriendo = !corriendo;
+    btnPlay.textContent = corriendo ? '\u23F8 Pausar' : '\u25B6 Reanudar';
+    if(corriendo) arrancar(); else clearInterval(timer);
+  });
+  btnReiniciar.addEventListener('click', ()=>{
+    segDia = 6*3600;
+    colas = {}; Object.keys(PARAMS).forEach(k=>colas[k]=0);
+    render();
+  });
+
+  render();
+  arrancar();
+})();
+
+(function(){
+  "use strict";
+
+  // ============================================================
+  // 1) MOTOR DE SIMULACIÓN (misma lógica que semaforo_sombrerete.py)
+  // ============================================================
+  const VERDE='VERDE', AMARILLO='AMARILLO', ROJO='ROJO';
+
+  const MOVIMIENTOS = [
+    ['somb_n_izq',    'Av. Sombrerete ↑ (giro izq. protegido)'],
+    ['somb_n_frente', 'Av. Sombrerete ↑ (de frente)'],
+    ['somb_s_frente', 'Av. Sombrerete ↓ (de frente)'],
+    ['metrobus_n',    'Metrobús ↑'],
+    ['metrobus_s',    'Metrobús ↓'],
+    ['calle6',        'Calle 6'],
+    ['praxedis',      'Av. Praxedis Guerrero'],
+  ];
+
+  const AGENDA = {
+    somb_n_izq:    [[0,17,VERDE],[17,20,AMARILLO]],
+    somb_n_frente: [[0,37,VERDE],[37,40,AMARILLO]],
+    somb_s_frente: [[20,37,VERDE],[37,40,AMARILLO]],
+    metrobus_n:    [[40,47,VERDE],[47,50,AMARILLO]],
+    metrobus_s:    [[50,57,VERDE],[57,60,AMARILLO]],
+    calle6:        [[60,77,VERDE],[77,80,AMARILLO]],
+    praxedis:      [[80,97,VERDE],[97,100,AMARILLO]],
+  };
+  const CICLO_TOTAL = 100;
+
+  const FASES = [
+    [0,20,  'F1 · Sombrerete ↑ con giro protegido'],
+    [20,40, 'F2 · Sombrerete ↑ y ↓ con verde simultáneo'],
+    [40,50, 'F3 · Metrobús ↑'],
+    [50,60, 'F4 · Metrobús ↓'],
+    [60,80, 'F5 · Calle 6'],
+    [80,100,'F6 · Av. Praxedis Guerrero'],
+  ];
+
+  const HORAS_PICO = [[[7,0],[9,0]], [[17,0],[19,0]]];
+
+  const PARAMS = {
+    somb_n_izq:    {valle:0.05, pico:0.15, servicio:0.6, capacidad:12},
+    somb_n_frente: {valle:0.15, pico:0.45, servicio:0.9, capacidad:30},
+    somb_s_frente: {valle:0.12, pico:0.35, servicio:0.8, capacidad:25},
+    metrobus_n:    {valle:0.02, pico:0.04, servicio:1.0, capacidad:5},
+    metrobus_s:    {valle:0.02, pico:0.04, servicio:1.0, capacidad:5},
+    calle6:        {valle:0.05, pico:0.20, servicio:0.5, capacidad:15},
+    praxedis:      {valle:0.05, pico:0.20, servicio:0.5, capacidad:15},
+  };
+
+  function estadoDe(mov,t){
+    for(const [ini,fin,color] of AGENDA[mov]){ if(t>=ini && t<fin) return color; }
+    return ROJO;
+  }
+  function faseDe(t){
+    for(const [ini,fin,nombre] of FASES){ if(t>=ini && t<fin) return nombre; }
+    return FASES[FASES.length-1][2];
+  }
+  function esHoraPico(segDia){
+    const s=((segDia%86400)+86400)%86400, minutos=Math.floor(s/60);
+    return HORAS_PICO.some(([[h1,m1],[h2,m2]])=>{
+      const ini=h1*60+m1, fin=h2*60+m2; return minutos>=ini && minutos<fin;
+    });
+  }
+  function hhmmss(segDia){
+    const s=((segDia%86400)+86400)%86400;
+    const h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sec=Math.floor(s%60);
+    const pad=n=>String(n).padStart(2,'0');
+    return pad(h)+':'+pad(m)+':'+pad(sec);
+  }
+  function muestraPoisson(lam){
+    if(lam<=0) return 0;
+    const L=Math.exp(-lam); let k=0,p=1;
+    do{ k++; p*=Math.random(); } while(p>L);
+    return k-1;
+  }
+  function nivelCongestion(cola,capacidad){
+    const r = capacidad? cola/capacidad : 0;
+    if(r<0.3) return 'BAJO';
+    if(r<0.7) return 'MEDIO';
+    if(r<1.2) return 'ALTO';
+    return 'SATURADO';
+  }
+  const COLOR_NIVEL = {BAJO:'#3ddc84', MEDIO:'#ffc145', ALTO:'#ff8a3d', SATURADO:'#ff5a5f'};
+  const COLOR_LUZ = {VERDE:'#3ddc84', AMARILLO:'#ffc145', ROJO:'#4a5058'};
+
+  function nuevaColaCero(){ const o={}; for(const k in PARAMS) o[k]=0; return o; }
+  function pasoSimulacion(colas, segDia, tCiclo){
+    const pico = esHoraPico(segDia);
+    for(const clave in PARAMS){
+      const p = PARAMS[clave];
+      const tasa = pico ? p.pico : p.valle;
+      colas[clave]+=muestraPoisson(tasa);
+      if(estadoDe(clave,tCiclo)===VERDE) colas[clave]=Math.max(0,colas[clave]-p.servicio);
+      colas[clave]=Math.min(colas[clave], p.capacidad*3);
+    }
+  }
+
+  // ============================================================
+  // 2) PRECÁLCULO DE LA CURVA DE 24 H (para la gráfica de fondo)
+  // ============================================================
+  function precomputarDia(muestreoSeg){
+    const colas = nuevaColaCero();
+    const horas=[], serie={sombrerete:[],calle6:[],praxedis:[],metrobus:[]};
+    for(let s=0;s<86400;s++){
+      pasoSimulacion(colas, s, s%CICLO_TOTAL);
+      if(s%muestreoSeg===0){
+        horas.push(s/3600);
+        serie.sombrerete.push(colas.somb_n_izq+colas.somb_n_frente+colas.somb_s_frente);
+        serie.calle6.push(colas.calle6);
+        serie.praxedis.push(colas.praxedis);
+        serie.metrobus.push(colas.metrobus_n+colas.metrobus_s);
+      }
+    }
+    return {horas, serie};
+  }
+
+  const DATOS_DIA = precomputarDia(20);
+
+  // ============================================================
+  // 3) ESQUEMA SVG DEL CRUCE (se construye una vez, se actualiza cada tick)
+  // ============================================================
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.getElementById('v3_schematic');
+
+  function crear(tag, attrs){
+    const el = document.createElementNS(NS, tag);
+    for(const k in attrs) el.setAttribute(k, attrs[k]);
+    return el;
+  }
+
+  // fondo
+  svg.appendChild(crear('rect',{x:0,y:0,width:400,height:400,fill:'#12161a',rx:10}));
+  // calles (cruz)
+  svg.appendChild(crear('rect',{x:170,y:0,width:60,height:400,fill:'#262c33'}));   // Sombrerete vertical
+  svg.appendChild(crear('rect',{x:0,y:170,width:400,height:60,fill:'#262c33'}));   // Calle6/Praxedis horizontal
+  // carril metrobus (franja central)
+  svg.appendChild(crear('rect',{x:192,y:0,width:16,height:400,fill:'#33507a'}));
+  // líneas de alto
+  [[170,150,60,4],[170,246,60,4]].forEach(([x,y,w,h])=>svg.appendChild(crear('rect',{x,y,width:w,height:h,fill:'#ffffff22'})));
+  [[150,170,4,60],[246,170,4,60]].forEach(([x,y,w,h])=>svg.appendChild(crear('rect',{x,y,width:w,height:h,fill:'#ffffff22'})));
+
+  // etiquetas
+  function etiqueta(x,y,texto,anchor){
+    const t = crear('text',{x,y,fill:'#8b93a1','font-size':11,'font-family':'Space Grotesk, sans-serif','text-anchor':anchor||'middle'});
+    t.textContent = texto;
+    return t;
+  }
+  svg.appendChild(etiqueta(200,18,'Sombrerete ↓ (llega del norte)'));
+  svg.appendChild(etiqueta(200,392,'Sombrerete ↑ (llega del sur)'));
+  svg.appendChild(etiqueta(20,200,'Calle 6','start'));
+  svg.appendChild(etiqueta(380,200,'Praxedis Guerrero','end'));
+
+  // señales (círculos) por movimiento: posición aproximada en el esquema
+  const posSenal = {
+    somb_n_izq:    {x:182, y:230},
+    somb_n_frente: {x:218, y:230},
+    somb_s_frente: {x:200, y:170},
+    metrobus_n:    {x:200, y:250},
+    metrobus_s:    {x:200, y:150},
+    calle6:        {x:150, y:200},
+    praxedis:      {x:250, y:200},
+  };
+  const circulosSenal = {};
+  for(const clave in posSenal){
+    const {x,y} = posSenal[clave];
+    const c = crear('circle',{cx:x, cy:y, r:8, fill:COLOR_LUZ.ROJO, stroke:'#00000055', 'stroke-width':1});
+    svg.appendChild(c);
+    circulosSenal[clave]=c;
+  }
+
+  // barras de cola por acceso (se actualizan cada tick)
+  const barraCola = {};
+  function agregarBarra(clave, x, y, w, h, orientacion){
+    const r = crear('rect',{x,y,width:w,height:h,fill:'var(--verde)',opacity:0.55,rx:2});
+    svg.appendChild(r);
+    barraCola[clave] = {el:r, base:{x,y,w,h}, orientacion};
+  }
+  // Sombrerete ↑ (llega desde abajo, barra crece hacia arriba desde y=396)
+  agregarBarra('somb_n_frente', 212, 396, 14, 0, 'vertical-arriba');
+  agregarBarra('somb_n_izq',    174, 396, 14, 0, 'vertical-arriba');
+  // Sombrerete ↓ (llega desde arriba, barra crece hacia abajo desde y=4)
+  agregarBarra('somb_s_frente', 174, 4, 14, 0, 'vertical-abajo');
+  // Calle 6 (llega desde la izquierda, crece hacia la derecha desde x=4)
+  agregarBarra('calle6', 4, 176, 0, 14, 'horizontal-derecha');
+  // Praxedis (llega desde la derecha, crece hacia la izquierda desde x=396)
+  agregarBarra('praxedis', 396, 210, 0, 14, 'horizontal-izquierda');
+
+  function actualizarBarra(clave, cola, capacidad){
+    const info = barraCola[clave];
+    if(!info) return;
+    const frac = Math.min(cola/(capacidad*1.5), 1);
+    const {x,y,w,h} = info.base;
+    const nivel = nivelCongestion(cola, capacidad);
+    const color = {BAJO:'#3ddc84',MEDIO:'#ffc145',ALTO:'#ff8a3d',SATURADO:'#ff5a5f'}[nivel];
+    info.el.setAttribute('fill', color);
+    if(info.orientacion==='vertical-arriba'){
+      const largo = frac*150;
+      info.el.setAttribute('height', largo);
+      info.el.setAttribute('y', 396-largo);
+    } else if(info.orientacion==='vertical-abajo'){
+      info.el.setAttribute('height', frac*150);
+      info.el.setAttribute('y', 4);
+    } else if(info.orientacion==='horizontal-derecha'){
+      info.el.setAttribute('width', frac*140);
+      info.el.setAttribute('x', 4);
+    } else if(info.orientacion==='horizontal-izquierda'){
+      const largo = frac*140;
+      info.el.setAttribute('width', largo);
+      info.el.setAttribute('x', 396-largo);
+    }
+  }
+
+  // ============================================================
+  // 4) TABLA DE MOVIMIENTOS (texto, accesible sin depender del color)
+  // ============================================================
+  const tbody = document.querySelector('#v3_tablaMovs tbody');
+  const filas = {};
+  MOVIMIENTOS.forEach(([clave,etq])=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td><span class="luz-dot" id="dot_'+clave+'"></span></td>'+
+      '<td>'+etq+'</td>'+
+      '<td class="mono" id="estado_'+clave+'">ROJO</td>'+
+      '<td class="mono" id="cola_'+clave+'">0</td>'+
+      '<td><span class="nivel" id="nivel_'+clave+'">BAJO</span></td>';
+    tbody.appendChild(tr);
+    filas[clave] = {
+      dot: tr.querySelector('#dot_'+clave),
+      estado: tr.querySelector('#estado_'+clave),
+      cola: tr.querySelector('#cola_'+clave),
+      nivel: tr.querySelector('#nivel_'+clave),
+    };
+  });
+
+  // ============================================================
+  // 5) GRÁFICA DE CONGESTIÓN (canvas)
+  // ============================================================
+  const canvas = document.getElementById('v3_chartCanvas');
+  const ctx = canvas.getContext('2d');
+  const CSS_W = 900, CSS_H = 360;
+  const DPR = window.devicePixelRatio || 1;
+  canvas.width = CSS_W*DPR; canvas.height = CSS_H*DPR;
+  canvas.style.width = CSS_W+'px'; canvas.style.height = CSS_H+'px';
+  ctx.scale(DPR,DPR);
+
+  const SERIES = [
+    {clave:'sombrerete', nombre:'Av. Sombrerete (ambos sentidos)', color:'#4C72B0', dash:[]},
+    {clave:'calle6',     nombre:'Calle 6',                          color:'#DD8452', dash:[8,4]},
+    {clave:'praxedis',   nombre:'Av. Praxedis Guerrero',            color:'#C44E52', dash:[2,3]},
+    {clave:'metrobus',   nombre:'Metrobús (ambas rutas)',           color:'#55A868', dash:[1,3]},
+  ];
+
+  // construir leyenda (HTML, accesible)
+  const leyendaEl = document.getElementById('v3_leyendaChart');
+  SERIES.forEach(s=>{
+    const span = document.createElement('span');
+    const sw = document.createElement('span');
+    sw.className='swatch';
+    sw.style.borderTopColor = s.color;
+    sw.style.borderTopStyle = s.dash.length? 'dashed':'solid';
+    span.appendChild(sw);
+    span.appendChild(document.createTextNode(s.nombre));
+    leyendaEl.appendChild(span);
+  });
+  const swPico = document.createElement('span');
+  swPico.innerHTML = '<span class="swatch pico"></span>Hora pico (7–9 AM / 5–7 PM)';
+  leyendaEl.appendChild(swPico);
+
+  const MARGEN = {izq:46, der:14, arriba:14, abajo:26};
+  function areaGrafica(){
+    return {
+      x0: MARGEN.izq, y0: MARGEN.arriba,
+      x1: CSS_W-MARGEN.der, y1: CSS_H-MARGEN.abajo,
+    };
+  }
+  let maxY = 1;
+  SERIES.forEach(s=>{ maxY = Math.max(maxY, Math.max(...DATOS_DIA.serie[s.clave])); });
+  maxY = Math.ceil(maxY/10)*10;
+
+  function xDeHora(h){ const a=areaGrafica(); return a.x0 + (h/24)*(a.x1-a.x0); }
+  function yDeValor(v){ const a=areaGrafica(); return a.y1 - (v/maxY)*(a.y1-a.y0); }
+
+  function dibujarFondoGrafica(){
+    const a = areaGrafica();
+    ctx.clearRect(0,0,CSS_W,CSS_H);
+
+    // franjas de hora pico
+    ctx.fillStyle = 'rgba(255,138,61,0.14)';
+    HORAS_PICO.forEach(([[h1,m1],[h2,m2]])=>{
+      const x1 = xDeHora(h1+m1/60), x2 = xDeHora(h2+m2/60);
+      ctx.fillRect(x1, a.y0, x2-x1, a.y1-a.y0);
+    });
+
+    // grid horizontal + etiquetas Y
+    ctx.strokeStyle = '#2c333b'; ctx.fillStyle='#8b93a1';
+    ctx.font = '11px "JetBrains Mono", monospace';
+    ctx.textAlign='right'; ctx.textBaseline='middle';
+    const pasosY = 4;
+    for(let i=0;i<=pasosY;i++){
+      const v = (maxY/pasosY)*i;
+      const y = yDeValor(v);
+      ctx.beginPath(); ctx.moveTo(a.x0,y); ctx.lineTo(a.x1,y); ctx.stroke();
+      ctx.fillText(Math.round(v), a.x0-8, y);
+    }
+
+    // eje X (horas)
+    ctx.textAlign='center'; ctx.textBaseline='top';
+    for(let h=0; h<=24; h+=2){
+      const x = xDeHora(h);
+      ctx.strokeStyle='#2c333b';
+      ctx.beginPath(); ctx.moveTo(x,a.y0); ctx.lineTo(x,a.y1); ctx.stroke();
+      ctx.fillText(String(h).padStart(2,'0')+':00', x, a.y1+6);
+    }
+
+    // series
+    SERIES.forEach(s=>{
+      ctx.beginPath();
+      ctx.setLineDash(s.dash);
+      ctx.strokeStyle = s.color;
+      ctx.lineWidth = 2;
+      DATOS_DIA.horas.forEach((h,i)=>{
+        const x = xDeHora(h), y = yDeValor(DATOS_DIA.serie[s.clave][i]);
+        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      });
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+
+    // eje Y label
+    ctx.save();
+    ctx.translate(14, (a.y0+a.y1)/2);
+    ctx.rotate(-Math.PI/2);
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillStyle='#8b93a1'; ctx.font='11px "Space Grotesk", sans-serif';
+    ctx.fillText('Vehículos en cola (simulado)', 0, 0);
+    ctx.restore();
+  }
+
+  function dibujarPlayhead(horaActual){
+    dibujarFondoGrafica();
+    const a = areaGrafica();
+    const x = xDeHora(horaActual % 24);
+    ctx.strokeStyle = '#edeae3';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(x,a.y0); ctx.lineTo(x,a.y1); ctx.stroke();
+    ctx.fillStyle = '#edeae3';
+    ctx.beginPath(); ctx.arc(x, a.y0, 3.5, 0, Math.PI*2); ctx.fill();
+  }
+
+  // ============================================================
+  // 6) BUCLE EN VIVO
+  // ============================================================
+  let colasVivas = nuevaColaCero();
+  let segDiaActual = 6*3600; // 06:00 por defecto
+  let corriendo = true;
+  let velocidad = 60; // segundos simulados por segundo real
+  let ultimoTimestamp = null;
+  let acumulador = 0;
+
+  const elReloj = document.getElementById('v3_reloj');
+  const elBadgePico = document.getElementById('v3_badgePico');
+  const elFaseTexto = document.getElementById('v3_faseTexto');
+  const elSegundoCiclo = document.getElementById('v3_segundoCiclo');
+
+  function renderizar(){
+    const tCiclo = ((segDiaActual%CICLO_TOTAL)+CICLO_TOTAL)%CICLO_TOTAL;
+    const pico = esHoraPico(segDiaActual);
+
+    elReloj.textContent = hhmmss(segDiaActual);
+    elBadgePico.textContent = pico ? '🔴 hora pico' : '🟢 tráfico normal';
+    elBadgePico.className = 'badge' + (pico?' pico':'');
+    elFaseTexto.textContent = faseDe(tCiclo);
+    elSegundoCiclo.textContent = tCiclo;
+
+    for(const clave in PARAMS){
+      const estado = estadoDe(clave, tCiclo);
+      const cola = colasVivas[clave];
+      const nivel = nivelCongestion(cola, PARAMS[clave].capacidad);
+
+      circulosSenal[clave].setAttribute('fill', COLOR_LUZ[estado]);
+      actualizarBarra(clave, cola, PARAMS[clave].capacidad);
+
+      const f = filas[clave];
+      f.dot.style.background = COLOR_LUZ[estado];
+      f.estado.textContent = estado;
+      f.cola.textContent = Math.round(cola);
+      f.nivel.textContent = nivel;
+      f.nivel.style.background = COLOR_NIVEL[nivel];
+      f.nivel.style.color = (nivel==='BAJO') ? '#0d2417' : '#241a00';
+    }
+
+    dibujarPlayhead(segDiaActual/3600);
+  }
+
+  function tick(timestamp){
+    if(ultimoTimestamp===null) ultimoTimestamp = timestamp;
+    const dtReal = (timestamp-ultimoTimestamp)/1000;
+    ultimoTimestamp = timestamp;
+
+    if(corriendo){
+      acumulador += dtReal*velocidad;
+      let pasos = 0;
+      while(acumulador>=1 && pasos<5000){
+        segDiaActual += 1;
+        pasoSimulacion(colasVivas, segDiaActual, ((segDiaActual%CICLO_TOTAL)+CICLO_TOTAL)%CICLO_TOTAL);
+        acumulador -= 1;
+        pasos++;
+      }
+    }
+    renderizar();
+    requestAnimationFrame(tick);
+  }
+
+  function saltarA(horaStr){
+    const [h,m] = horaStr.split(':').map(Number);
+    let objetivo = h*3600 + m*60;
+    let diaBase = Math.floor(segDiaActual/86400)*86400;
+    let destino = diaBase + objetivo;
+    if(destino <= segDiaActual) destino += 86400;
+    while(segDiaActual < destino){
+      segDiaActual += 1;
+      pasoSimulacion(colasVivas, segDiaActual, ((segDiaActual%CICLO_TOTAL)+CICLO_TOTAL)%CICLO_TOTAL);
+    }
+    renderizar();
+  }
+
+  // ---- controles ----
+  document.getElementById('v3_btnPlay').addEventListener('click', function(){
+    corriendo = !corriendo;
+    this.textContent = corriendo ? '⏸ Pausar' : '▶ Reanudar';
+    this.classList.toggle('activo', corriendo);
+  });
+  document.getElementById('v3_velocidad').addEventListener('change', function(){
+    velocidad = Number(this.value);
+  });
+  document.getElementById('v3_btnPico1').addEventListener('click', function(){ saltarA('07:00'); });
+  document.getElementById('v3_btnPico2').addEventListener('click', function(){ saltarA('17:00'); });
+  document.getElementById('v3_btnReiniciar').addEventListener('click', function(){
+    const horaInicio = document.getElementById('v3_horaInicio').value || '06:00';
+    const [h,m] = horaInicio.split(':').map(Number);
+    colasVivas = nuevaColaCero();
+    segDiaActual = h*3600 + m*60;
+    acumulador = 0;
+    renderizar();
+  });
+
+  renderizar();
+  requestAnimationFrame(tick);
+})();
+
+</script>
+</body>
+</html>
