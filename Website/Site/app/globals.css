@@ -217,14 +217,96 @@ h1 {
 }
 
 .simulations-section,
+.company-section,
 .capabilities-section,
+.team-section,
 .project-section,
+.faq-section,
+.contact-section,
 footer {
   padding-left: clamp(20px, 7vw, 104px);
   padding-right: clamp(20px, 7vw, 104px);
 }
 
+.company-section {
+  background: var(--white);
+  padding-bottom: 96px;
+  padding-top: 96px;
+}
+
+.company-overview {
+  display: grid;
+  gap: clamp(40px, 8vw, 120px);
+  grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.1fr);
+}
+
+.company-overview h2,
+.team-section h2,
+.faq-section h2,
+.contact-section h2 {
+  font-size: clamp(2rem, 4vw, 4rem);
+  line-height: 1.02;
+  margin-bottom: 0;
+}
+
+.company-copy {
+  max-width: 700px;
+}
+
+.company-copy p {
+  color: var(--muted);
+  font-size: clamp(1rem, 1.5vw, 1.18rem);
+  line-height: 1.75;
+}
+
+.history-band {
+  border-bottom: 1px solid var(--line);
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 40px;
+  grid-template-columns: minmax(180px, 0.35fr) minmax(0, 1fr);
+  margin-top: 72px;
+  padding: 34px 0;
+}
+
+.history-band p:last-child {
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 0;
+  max-width: 900px;
+}
+
+.achievement-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 44px;
+}
+
+.achievement {
+  border-left: 1px solid var(--line);
+  min-height: 140px;
+  padding: 4px 24px 0;
+}
+
+.achievement:first-child {
+  border-left: 0;
+  padding-left: 0;
+}
+
+.achievement > span,
+.team-member > span {
+  color: var(--primary);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.7rem;
+}
+
+.achievement p {
+  line-height: 1.55;
+  margin: 22px 0 0;
+}
+
 .simulations-section {
+  background: var(--paper);
   padding-bottom: 96px;
   padding-top: 88px;
 }
@@ -418,12 +500,56 @@ footer {
   margin-bottom: 0;
 }
 
+.team-section {
+  background: var(--white);
+  padding-bottom: 100px;
+  padding-top: 100px;
+}
+
+.team-heading {
+  grid-template-columns: 1fr 0.8fr;
+}
+
+.team-grid {
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.team-member {
+  border-left: 1px solid var(--line);
+  min-height: 290px;
+  padding: 32px;
+}
+
+.team-member:first-child {
+  border-left: 0;
+  padding-left: 0;
+}
+
+.team-member h3 {
+  font-size: 1.35rem;
+  line-height: 1.2;
+  margin: 54px 0 16px;
+}
+
+.team-member p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.team-member .member-role {
+  color: var(--ink);
+  font-weight: 700;
+}
+
 .project-section {
   align-items: end;
   background: #e8edf9;
   display: grid;
   gap: 44px;
-  grid-template-columns: 1fr 0.8fr auto;
+  grid-template-columns: 1fr 0.8fr;
   padding-bottom: 76px;
   padding-top: 76px;
 }
@@ -436,6 +562,72 @@ footer {
   background: var(--ink);
   color: var(--white);
   white-space: nowrap;
+}
+
+.faq-section {
+  background: var(--paper);
+  display: grid;
+  gap: clamp(48px, 8vw, 120px);
+  grid-template-columns: minmax(260px, 0.75fr) minmax(0, 1.25fr);
+  padding-bottom: 96px;
+  padding-top: 96px;
+}
+
+.faq-list {
+  border-top: 1px solid var(--line);
+}
+
+.faq-list details {
+  border-bottom: 1px solid var(--line);
+  padding: 24px 0;
+}
+
+.faq-list summary {
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.4;
+  padding-right: 24px;
+}
+
+.faq-list details p {
+  color: var(--muted);
+  line-height: 1.65;
+  margin: 18px 0 0;
+  max-width: 720px;
+}
+
+.contact-section {
+  align-items: end;
+  background: var(--primary);
+  color: var(--white);
+  display: grid;
+  gap: 44px;
+  grid-template-columns: 0.9fr 0.8fr auto;
+  padding-bottom: 76px;
+  padding-top: 76px;
+}
+
+.contact-section > p {
+  color: #dbe4ff;
+  line-height: 1.65;
+  margin-bottom: 0;
+  max-width: 560px;
+}
+
+.contact-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.contact-primary {
+  background: var(--white);
+  color: var(--primary-dark);
+}
+
+.contact-secondary {
+  border: 1px solid #8fa6e8;
+  color: var(--white);
 }
 
 footer {
@@ -455,17 +647,29 @@ footer p {
 }
 
 @media (max-width: 1080px) {
+  .achievement-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 32px;
+  }
+
+  .achievement:nth-child(3) {
+    border-left: 0;
+    padding-left: 0;
+  }
+
   .simulation-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .project-section {
+  .project-section,
+  .contact-section {
     align-items: start;
     grid-template-columns: 1fr 1fr;
   }
 
-  .project-section .button {
-    justify-self: start;
+  .contact-actions {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, max-content));
   }
 }
 
@@ -505,9 +709,37 @@ footer p {
   }
 
   .section-heading,
+  .company-overview,
+  .history-band,
   .capabilities-section,
-  .project-section {
+  .project-section,
+  .faq-section,
+  .contact-section {
     grid-template-columns: 1fr;
+  }
+
+  .achievement-grid,
+  .team-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .achievement,
+  .achievement:nth-child(3),
+  .team-member,
+  .team-member:first-child {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    min-height: auto;
+    padding: 28px 0;
+  }
+
+  .achievement:first-child,
+  .team-member:first-child {
+    border-top: 0;
+  }
+
+  .team-member h3 {
+    margin-top: 28px;
   }
 
   .simulation-grid {
@@ -528,6 +760,17 @@ footer p {
 
   .capability p {
     grid-column: 2;
+  }
+
+  .contact-actions {
+    grid-column: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .contact-actions .button {
+    justify-content: flex-start;
+    overflow-wrap: anywhere;
+    white-space: normal;
   }
 
   footer {

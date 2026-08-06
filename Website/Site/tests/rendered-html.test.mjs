@@ -22,6 +22,14 @@ test("renders the company site and simulation launchers", async () => {
   const html = await response.text();
 
   assert.match(html, /Loop Nopal Solutions/);
+  assert.match(html, /Tecnologia practica para una movilidad urbana mas eficiente/);
+  assert.match(html, /Nuestra historia/);
+  assert.match(html, /Oscar B\. Lara Lopez/);
+  assert.match(html, /Ricardo Andrade Prado/);
+  assert.match(html, /Edgar Renan Lopez Silva/);
+  assert.match(html, /Preguntas frecuentes/);
+  assert.match(html, /mailto:branurjoy1095@outlook\.com/);
+  assert.match(html, /tel:\+524462209873/);
   assert.match(html, /Simulaciones ejecutables/);
   assert.match(html, /target="_blank"/);
   assert.match(html, /\/simulaciones\/v4\.html/);
@@ -29,6 +37,9 @@ test("renders the company site and simulation launchers", async () => {
   assert.match(html, /\/simulaciones\/v2\.html/);
   assert.doesNotMatch(html, /\/simulaciones\/(?:index|v3)\.html/);
   assert.doesNotMatch(html, /Abrir tablero|V1 \+ V2 \+ V3/);
+  assert.doesNotMatch(html, /sites\.google\.com|claude\.ai/);
+  assert.doesNotMatch(html, /administracion@parkingelmarques\.com|elopez83@alumnos\.uaq\.mx/);
+  assert.doesNotMatch(html, /4461476312|7298006072/);
   assert.match(html, /Queretaro, Qro, Mexico/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/);
 });
