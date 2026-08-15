@@ -1,63 +1,44 @@
-# LoopNopalSolutions
+# Loop Nopal Solutions
 
-Private project repository for Loop Nopal Solutions.
+Proyecto privado de Loop Nopal Solutions para representar visualmente ciclos
+semafóricos y escenarios de congestión urbana.
 
-Company/project domain: `loopnopalsolutions.xyz`
-Domain registrar: Porkbun
-
-## Repository Structure
+## Estructura actual
 
 ```text
 LoopNopalSolutions/
 ├── Website/
-├── Simulacion_HTML/
-├── Simulacion_Python/
-├── Simulacion_MATLAB/
-├── Documentacion/
+│   └── Site/
+│       ├── index.html
+│       ├── styles.css
+│       ├── public/
+│       │   └── og.png
+│       └── simulaciones/
+│           ├── simulaciones.css
+│           ├── v1.html
+│           ├── v2.html
+│           └── v4.html
 ├── API/
-└── Database/
+└── Documentacion/
 ```
 
-## Current Simulation
+## Simulaciones
 
-The HTML simulation is in:
+- `v1.html`: ciclo semafórico de seis fases.
+- `v2.html`: perfil demostrativo de congestión durante 24 horas.
+- `v4.html`: comparación visual del plan actual y el plan optimizado.
 
-```text
-Simulacion_HTML/v4_standalone_upgrade.html
-```
+Toda la interfaz y las animaciones de las simulaciones están desarrolladas con
+HTML y CSS. No existe código JavaScript ni TypeScript en el proyecto.
 
-`Simulacion_HTML/index.html` mirrors V4 as the main static entry point. V1 and
-V2 remain available as historical standalone versions.
+Las cifras mostradas son ilustrativas y no sustituyen aforos viales reales.
 
-The current public deployment is:
+## Uso local
 
-```text
-https://simulation.loopnopalsolutions.xyz/
-```
+Abre `Website/Site/index.html` directamente en un navegador. El sitio no necesita
+instalación de dependencias, compilación ni un servidor para funcionar.
 
-## Target Architecture
+## API conservada
 
-```text
-Google Sites
-  |
-  v
-simulation.loopnopalsolutions.xyz
-  |
-  v
-Frontend (HTML + JavaScript)
-  |
-  v
-Python API (FastAPI)
-  |-- Database
-  |-- Google Maps / Waze
-  |-- Sensors
-  `-- Optimization algorithm
-```
-
-## Suggested Next Steps
-
-1. Create a private GitHub repository named `LoopNopalSolutions`.
-2. Push this local project to GitHub.
-3. Deploy `Simulacion_HTML/` to a static host.
-4. Point `simulation.loopnopalsolutions.xyz` to the static host.
-5. Add the simulation link button to the official Google Site.
+La carpeta `API/` contiene un servicio mínimo en Python reservado para una futura
+integración. No participa en las simulaciones HTML/CSS actuales.

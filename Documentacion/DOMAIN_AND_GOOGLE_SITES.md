@@ -53,7 +53,7 @@ Google Sites custom URLs require a subdomain such as `www`. To make the root dom
 
 ## Point the Simulation Subdomain
 
-After deploying `Simulacion_HTML/` to a static host, create a DNS record in Porkbun:
+After deploying `Website/Site/` to a static host, create a DNS record in Porkbun:
 
 ```text
 Type: CNAME

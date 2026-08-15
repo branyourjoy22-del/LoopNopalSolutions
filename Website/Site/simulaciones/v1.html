@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Ciclo semafórico seguro de seis fases para el cruce de avenida Sombrerete.">
+  <title>Ciclo semafórico | Loop Nopal Solutions</title>
+  <link rel="stylesheet" href="simulaciones.css">
+</head>
+<body>
+  <input class="state-input" type="radio" name="speed" id="speed-slow">
+  <input class="state-input" type="radio" name="speed" id="speed-normal" checked>
+  <input class="state-input" type="radio" name="speed" id="speed-fast">
+  <input class="state-input" type="checkbox" id="pause">
+
+  <main class="page-shell">
+    <div class="topbar"><a class="back-link" href="../index.html#simulaciones">← Volver al sitio</a><div class="brand"><span class="brand-mark">LN</span> Loop Nopal Solutions</div></div>
+    <header class="hero"><div><p class="kicker">Simulación 02 / Ciclo</p><h1>Seis fases, un ciclo coordinado</h1></div><p class="hero-copy">Una representación acelerada del orden de paso y transición de un ciclo semafórico demostrativo de 100 segundos.</p></header>
+    <p class="notice"><strong>Seguridad del ciclo:</strong> cada cambio de vía incluye un intervalo de todo rojo para despejar el centro del cruce.</p>
+
+    <section class="controls" aria-label="Controles visuales">
+      <strong>Velocidad visual</strong>
+      <label class="control-label" for="speed-slow">Lenta</label><label class="control-label" for="speed-normal">Normal</label><label class="control-label" for="speed-fast">Rápida</label>
+      <label class="control-label pause-label" for="pause"><span class="pause-when-running">Pausar ciclo</span><span class="play-when-paused">Reanudar ciclo</span></label>
+    </section>
+
+    <section class="phase-board">
+      <div class="phase-visual">
+        <div class="intersection" aria-label="Intersección semafórica animada">
+          <div class="road-v"></div><div class="road-h"></div><div class="crossing"></div>
+          <span class="road-label label-sombrerete">Av. Sombrerete</span><span class="road-label label-calle">Calle 6</span><span class="road-label label-praxedis">Práxedis</span>
+          <span class="signal signal-north"><i class="animated"></i><i class="animated"></i><i class="animated"></i></span><span class="signal signal-south"><i class="animated"></i><i class="animated"></i><i class="animated"></i></span><span class="signal signal-east"><i class="animated"></i><i class="animated"></i><i class="animated"></i></span><span class="signal signal-west"><i class="animated"></i><i class="animated"></i><i class="animated"></i></span>
+          <i class="car horizontal animated"></i><i class="car horizontal alt animated"></i><i class="car vertical animated"></i><i class="car vertical alt animated"></i>
+        </div>
+      </div>
+      <div class="cycle-panel">
+        <p class="kicker">Secuencia proporcional</p><h2>Ciclo total: 100 segundos</h2><p>Las calles perpendiculares nunca reciben luz verde al mismo tiempo. Entre ambas ventanas de paso existe una fase de todo rojo.</p>
+        <div class="timeline" aria-label="Línea de tiempo de seis fases"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span></div>
+        <div class="cycle-progress"><i class="animated"></i></div>
+        <div class="phase-list">
+          <div class="phase-row"><span>1</span><b>Sombrerete en verde</b><time>0–40 s</time></div>
+          <div class="phase-row"><span>2</span><b>Amarillo Sombrerete</b><time>40–47 s</time></div>
+          <div class="phase-row"><span>3</span><b>Todo rojo · despeje</b><time>47–50 s</time></div>
+          <div class="phase-row"><span>4</span><b>Calle 6 y Práxedis en verde</b><time>50–90 s</time></div>
+          <div class="phase-row"><span>5</span><b>Amarillo Calle 6 y Práxedis</b><time>90–97 s</time></div>
+          <div class="phase-row"><span>6</span><b>Todo rojo · reinicio</b><time>97–100 s</time></div>
+        </div>
+      </div>
+    </section>
+    <p class="data-note">La duración visual se acelera para facilitar la observación; las etiquetas conservan los segundos del escenario de referencia.</p>
+  </main>
+</body>
+</html>

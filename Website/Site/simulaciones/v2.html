@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Perfil visual de congestión durante 24 horas en el cruce de avenida Sombrerete.">
+  <title>Congestión en 24 horas | Loop Nopal Solutions</title>
+  <link rel="stylesheet" href="simulaciones.css">
+</head>
+<body>
+  <input class="state-input" type="radio" name="speed" id="speed-slow">
+  <input class="state-input" type="radio" name="speed" id="speed-normal" checked>
+  <input class="state-input" type="radio" name="speed" id="speed-fast">
+  <input class="state-input" type="radio" name="period" id="period-valley" checked>
+  <input class="state-input" type="radio" name="period" id="period-am">
+  <input class="state-input" type="radio" name="period" id="period-pm">
+  <input class="state-input" type="checkbox" id="pause">
+
+  <main class="page-shell">
+    <div class="topbar"><a class="back-link" href="../index.html#simulaciones">← Volver al sitio</a><div class="brand"><span class="brand-mark">LN</span> Loop Nopal Solutions</div></div>
+    <header class="hero"><div><p class="kicker">Simulación 03 / Jornada</p><h1>Congestión durante 24 horas</h1></div><p class="hero-copy">Un perfil diario precalculado muestra cómo crece y disminuye la presión vehicular durante periodos valle y horas pico.</p></header>
+    <p class="notice"><strong>Alcance:</strong> las barras y cifras son ilustrativas. La línea blanca representa el avance acelerado de una jornada y no la hora real.</p>
+
+    <section class="controls" aria-label="Controles visuales">
+      <strong>Periodo</strong>
+      <label class="control-label" for="period-valley">Valle</label><label class="control-label" for="period-am">Pico AM</label><label class="control-label" for="period-pm">Pico PM</label>
+      <strong>Velocidad</strong>
+      <label class="control-label" for="speed-slow">0.5×</label><label class="control-label" for="speed-normal">1×</label><label class="control-label" for="speed-fast">2×</label>
+      <label class="control-label pause-label" for="pause"><span class="pause-when-running">Pausar</span><span class="play-when-paused">Reanudar</span></label>
+    </section>
+
+    <section class="day-layout">
+      <article class="day-chart">
+        <h2>Presión vehicular relativa</h2><p>Perfil demostrativo por hora · 00:00 a 24:00</p>
+        <div class="bars" aria-label="Gráfica de congestión relativa por hora">
+          <i class="bar animated" style="--h:18%"></i><i class="bar animated" style="--h:14%"></i><i class="bar animated" style="--h:11%"></i><i class="bar animated" style="--h:10%"></i><i class="bar animated" style="--h:13%"></i><i class="bar medium animated" style="--h:30%"></i><i class="bar high animated" style="--h:58%"></i><i class="bar saturated animated" style="--h:92%"></i><i class="bar saturated animated" style="--h:100%"></i><i class="bar high animated" style="--h:70%"></i><i class="bar medium animated" style="--h:48%"></i><i class="bar medium animated" style="--h:42%"></i><i class="bar medium animated" style="--h:46%"></i><i class="bar medium animated" style="--h:50%"></i><i class="bar medium animated" style="--h:45%"></i><i class="bar high animated" style="--h:58%"></i><i class="bar high animated" style="--h:78%"></i><i class="bar saturated animated" style="--h:100%"></i><i class="bar saturated animated" style="--h:94%"></i><i class="bar high animated" style="--h:70%"></i><i class="bar medium animated" style="--h:48%"></i><i class="bar medium animated" style="--h:36%"></i><i class="bar animated" style="--h:28%"></i><i class="bar animated" style="--h:22%"></i>
+          <i class="day-marker animated" aria-hidden="true"></i>
+        </div>
+        <div class="hour-labels"><span>00 h</span><span>06 h</span><span>12 h</span><span>18 h</span><span>24 h</span></div>
+        <div class="legend"><span style="--c:var(--green)">Baja</span><span style="--c:var(--yellow)">Media</span><span style="--c:var(--orange)">Alta</span><span style="--c:var(--red)">Saturada</span></div>
+      </article>
+
+      <aside class="period-panel">
+        <h2>Lectura del escenario</h2><p>Selecciona un periodo para consultar su resumen precalculado.</p>
+        <div class="period-card period-valley"><p class="level">Baja</p><p>Flujo estable con reserva de capacidad y colas breves.</p><dl><dt>Horario representativo</dt><dd>11:00</dd><dt>Cola ilustrativa</dt><dd>12 veh.</dd><dt>Ocupación</dt><dd>34%</dd></dl></div>
+        <div class="period-card period-am"><p class="level">Saturada</p><p>La llegada de vehículos supera temporalmente la capacidad representada.</p><dl><dt>Horario representativo</dt><dd>08:00</dd><dt>Cola ilustrativa</dt><dd>52 veh.</dd><dt>Ocupación</dt><dd>96%</dd></dl></div>
+        <div class="period-card period-pm"><p class="level">Saturada</p><p>Segundo máximo diario, con presión elevada sobre los accesos principales.</p><dl><dt>Horario representativo</dt><dd>18:00</dd><dt>Cola ilustrativa</dt><dd>49 veh.</dd><dt>Ocupación</dt><dd>92%</dd></dl></div>
+      </aside>
+    </section>
+    <p class="data-note">El perfil no proviene de sensores ni de un aforo oficial. Su propósito es comunicar el comportamiento esperado de manera visual.</p>
+  </main>
+</body>
+</html>
