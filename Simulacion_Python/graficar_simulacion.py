@@ -1,17 +1,13 @@
 """
-Visualización gráfica (matplotlib) de la simulación del cruce
-Av. Sombrerete - Calle 6 - Av. Praxedis Guerrero (Querétaro)
+Visualización gráfica de la geometría, colas y ciclo del cruce
+Sombrerete - Calle 6 - Praxedis Guerrero (Querétaro).
 
 Reutiliza el motor de simulación de semaforo_sombrerete.py (misma AGENDA,
 mismos parámetros de tráfico) para que las gráficas y la simulación de
 consola nunca queden desincronizadas.
 
-Genera una figura con dos paneles:
-  A) Congestión (vehículos en cola) a lo largo de 24 h, con las horas
-     pico (7-9 AM y 5-7 PM) resaltadas.
-  B) Diagrama de tiempos del ciclo semafórico de 100 s (verde/amarillo
-     por movimiento), equivalente al diagrama del PDF original pero
-     generado directamente desde los mismos datos que usa la simulación.
+Genera una figura con tres paneles: geometría documentada, colas durante
+24 horas y diagrama de tiempos construido desde el mismo motor.
 
 Uso:
     python3 graficar_simulacion.py
@@ -22,8 +18,13 @@ import argparse
 import importlib.util
 import os
 
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
+try:
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as mpatches
+except ModuleNotFoundError as exc:
+    raise SystemExit(
+        "Falta matplotlib. Instala la dependencia con: pip install matplotlib"
+    ) from exc
 
 # ------------------------------------------------------------------
 # Importar el motor de simulación desde semaforo_sombrerete.py
@@ -55,10 +56,10 @@ def simular_24h(semilla=None, muestreo_seg=30):
 
     horas = []
     serie = {
-        "Av. Sombrerete (ambos sentidos)": [],
-        "Calle 6": [],
-        "Av. Praxedis Guerrero": [],
-        "Metrobús (ambas rutas)": [],
+        "Sombrerete general (4 carriles)": [],
+        "Calle 6 (1 entrada)": [],
+        "Praxedis Guerrero (2 entradas)": [],
+        "Metrobús (2 carriles exclusivos)": [],
     }
 
     for s in range(0, 86400):
@@ -68,28 +69,26 @@ def simular_24h(semilla=None, muestreo_seg=30):
         if s % muestreo_seg == 0:
             horas.append(s / 3600.0)
             c = sim.colas
-            serie["Av. Sombrerete (ambos sentidos)"].append(
-                c["somb_n_izq"] + c["somb_n_frente"] + c["somb_s_frente"]
-            )
-            serie["Calle 6"].append(c["calle6"])
-            serie["Av. Praxedis Guerrero"].append(c["praxedis"])
-            serie["Metrobús (ambas rutas)"].append(c["metrobus_n"] + c["metrobus_s"])
+            serie["Sombrerete general (4 carriles)"].append(c["sb_general"] + c["nb_general"])
+            serie["Calle 6 (1 entrada)"].append(c["c6_eb"])
+            serie["Praxedis Guerrero (2 entradas)"].append(c["prax_wb"])
+            serie["Metrobús (2 carriles exclusivos)"].append(c["sb_bus"] + c["nb_bus"])
 
     return horas, serie
 
 
 def graficar_congestion(ax, horas, serie):
     colores = {
-        "Av. Sombrerete (ambos sentidos)": COLOR_SOMBRERETE,
-        "Calle 6": COLOR_CALLE6,
-        "Av. Praxedis Guerrero": COLOR_PRAXEDIS,
-        "Metrobús (ambas rutas)": COLOR_METROBUS,
+        "Sombrerete general (4 carriles)": COLOR_SOMBRERETE,
+        "Calle 6 (1 entrada)": COLOR_CALLE6,
+        "Praxedis Guerrero (2 entradas)": COLOR_PRAXEDIS,
+        "Metrobús (2 carriles exclusivos)": COLOR_METROBUS,
     }
     estilos = {
-        "Av. Sombrerete (ambos sentidos)": "-",
-        "Calle 6": "--",
-        "Av. Praxedis Guerrero": "-.",
-        "Metrobús (ambas rutas)": ":",
+        "Sombrerete general (4 carriles)": "-",
+        "Calle 6 (1 entrada)": "--",
+        "Praxedis Guerrero (2 entradas)": "-.",
+        "Metrobús (2 carriles exclusivos)": ":",
     }
 
     for nombre, valores in serie.items():
@@ -106,8 +105,7 @@ def graficar_congestion(ax, horas, serie):
     handles.append(parche_pico)
     labels.append("Hora pico (7-9 AM / 5-7 PM)")
 
-    ax.set_title("La congestión se dispara en horas pico (7-9 AM y 5-7 PM)",
-                 fontweight="bold")
+    ax.set_title("Colas modeladas durante 24 horas", fontweight="bold")
     ax.set_xlabel("Hora del día")
     ax.set_ylabel("Vehículos en cola (simulado)")
     ax.set_xlim(0, 24)
@@ -116,6 +114,48 @@ def graficar_congestion(ax, horas, serie):
     ax.legend(handles=handles, labels=labels, loc="upper left", frameon=True, fontsize=9)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
+
+
+def graficar_geometria(ax):
+    """Representa únicamente carriles y sentidos confirmados por la imagen."""
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 10)
+    ax.set_aspect("equal")
+    ax.axis("off")
+
+    asfalto = "#30363d"
+    ax.add_patch(mpatches.Rectangle((3, 0), 4, 10, color=asfalto))
+    ax.add_patch(mpatches.Rectangle((0, 3.5), 10, 3, color=asfalto))
+    ax.add_patch(mpatches.Rectangle((4.65, 0), 0.70, 10, color="#2D6CA9", alpha=0.92))
+
+    for x in (3.65, 4.25, 5.75, 6.35):
+        ax.plot([x, x], [0, 3.3], color="white", linewidth=0.8, dashes=(6, 6))
+        ax.plot([x, x], [6.7, 10], color="white", linewidth=0.8, dashes=(6, 6))
+    ax.plot([5, 5], [0, 3.3], color="white", linewidth=0.8, dashes=(5, 5))
+    ax.plot([5, 5], [6.7, 10], color="white", linewidth=0.8, dashes=(5, 5))
+    for y in (4.25, 5.0, 5.75):
+        ax.plot([7.2, 10], [y, y], color="white", linewidth=0.8, dashes=(6, 6))
+    ax.plot([0, 2.8], [5, 5], color="white", linewidth=0.8, dashes=(6, 6))
+
+    for x in (3.95, 4.45):
+        ax.text(x, 8.2, "↓", color="white", fontsize=18, ha="center", va="center")
+        ax.text(x, 1.8, "↓", color="white", fontsize=18, ha="center", va="center")
+    for x in (5.55, 6.05):
+        ax.text(x, 8.2, "↑", color="white", fontsize=18, ha="center", va="center")
+        ax.text(x, 1.8, "↑", color="white", fontsize=18, ha="center", va="center")
+    ax.text(4.82, 8.2, "↓", color="white", fontsize=15, ha="center")
+    ax.text(5.18, 1.8, "↑", color="white", fontsize=15, ha="center")
+    ax.text(1.2, 5.55, "←", color="white", fontsize=18, ha="center")
+    ax.text(1.8, 4.45, "→", color="white", fontsize=18, ha="center")
+    ax.text(8.2, 5.85, "←  ←", color="white", fontsize=16, ha="center")
+    ax.text(8.2, 4.15, "→  →", color="white", fontsize=16, ha="center")
+
+    ax.text(5, 9.72, "Sombrerete · norte", color="white", ha="center", fontweight="bold")
+    ax.text(5, 0.12, "Sombrerete · sur", color="white", ha="center", fontweight="bold")
+    ax.text(1.3, 6.15, "Calle 6\n1 entrada / 1 salida", color="white", ha="center", fontsize=9)
+    ax.text(8.3, 6.15, "Praxedis Guerrero\n2 entradas / 2 salidas", color="white", ha="center", fontsize=9)
+    ax.text(5, 7.2, "METROBÚS", color="white", ha="center", fontsize=8, rotation=90)
+    ax.set_title("Geometría y sentidos documentados", fontweight="bold")
 
 
 def graficar_ciclo_semaforico(ax):
@@ -132,18 +172,18 @@ def graficar_ciclo_semaforico(ax):
             ax.broken_barh([(inicio, fin - inicio)], (y - 0.4, 0.8),
                             facecolors=COLOR_LUZ[color])
 
-    # Líneas verticales en los límites de cada fase (F1..F6)
-    for inicio, fin, nombre in sem.FASES:
+    # Líneas verticales en los límites de los nueve intervalos.
+    for numero, (inicio, fin, nombre) in enumerate(sem.FASES, 1):
         ax.axvline(inicio, color="black", linewidth=0.6, alpha=0.4)
-        ax.text(inicio + (fin - inicio) / 2, len(claves) + 0.7, nombre.split(" - ")[0],
-                ha="center", fontsize=8, color="black")
+        ax.text(inicio + (fin - inicio) / 2, len(claves) + 0.7, str(numero),
+                ha="center", fontsize=7, color="black")
     ax.axvline(sem.CICLO_TOTAL, color="black", linewidth=0.6, alpha=0.4)
 
     ax.set_yticks(range(1, len(claves) + 1))
     ax.set_yticklabels(list(reversed(etiquetas)), fontsize=9)
     ax.set_xlim(0, sem.CICLO_TOTAL)
     ax.set_xlabel("Segundo del ciclo semafórico (0-100 s)")
-    ax.set_title("Ciclo semafórico del cruce (100 s por ciclo)", fontweight="bold")
+    ax.set_title("Ciclo base: tres etapas de servicio y seis transiciones", fontweight="bold")
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.spines["left"].set_visible(False)
@@ -168,17 +208,18 @@ def generar_figura(semilla=None, muestreo_seg=30, salida="congestion_cruce_sombr
         "axes.labelsize": 10,
     })
 
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(11, 10),
-                                    gridspec_kw={"height_ratios": [1.3, 1]})
+    fig, (ax0, ax1, ax2) = plt.subplots(3, 1, figsize=(11, 15),
+                                         gridspec_kw={"height_ratios": [1.15, 1.3, 1]})
 
+    graficar_geometria(ax0)
     graficar_congestion(ax1, horas, serie)
     graficar_ciclo_semaforico(ax2)
 
     fig.suptitle("Cruce Av. Sombrerete - Calle 6 - Av. Praxedis Guerrero (Querétaro)",
                  fontsize=15, fontweight="bold", y=0.995)
     fig.text(0.5, 0.965,
-              "Fases y tiempos de luz tomados del diagrama/mapa mental proporcionados; "
-              "las tasas de llegada de vehículos son simuladas (no son conteos viales reales)",
+              "Carriles y sentidos tomados de la imagen proporcionada; demanda, saturación y tiempos "
+              "son supuestos de modelación, no conteos viales reales",
               ha="center", fontsize=9, style="italic", color="#555555")
 
     plt.tight_layout(rect=[0, 0, 1, 0.96])
