@@ -69,10 +69,10 @@ def simular_24h(semilla=None, muestreo_seg=30):
         if s % muestreo_seg == 0:
             horas.append(s / 3600.0)
             c = sim.colas
-            serie["Sombrerete general (4 carriles)"].append(c["sb_general"] + c["nb_general"])
-            serie["Calle 6 (1 entrada)"].append(c["c6_eb"])
-            serie["Praxedis Guerrero (2 entradas)"].append(c["prax_wb"])
-            serie["Metrobús (2 carriles exclusivos)"].append(c["sb_bus"] + c["nb_bus"])
+            serie["Sombrerete general (4 carriles)"].append(c["somb_n_frente"] + c["somb_s_frente"])
+            serie["Calle 6 (1 entrada)"].append(c["calle6"])
+            serie["Praxedis Guerrero (2 entradas)"].append(c["praxedis"])
+            serie["Metrobús (2 carriles exclusivos)"].append(c["metrobus_n"] + c["metrobus_s"])
 
     return horas, serie
 
@@ -152,8 +152,9 @@ def graficar_geometria(ax):
 
     ax.text(5, 9.72, "Sombrerete · norte", color="white", ha="center", fontweight="bold")
     ax.text(5, 0.12, "Sombrerete · sur", color="white", ha="center", fontweight="bold")
-    ax.text(1.3, 6.15, "Calle 6\n1 entrada / 1 salida", color="white", ha="center", fontsize=9)
-    ax.text(8.3, 6.15, "Praxedis Guerrero\n2 entradas / 2 salidas", color="white", ha="center", fontsize=9)
+    etiqueta = {"boxstyle": "round,pad=0.25", "facecolor": "#30363d", "edgecolor": "#55A868", "alpha": 0.95}
+    ax.text(1.35, 6.05, "Calle 6\n1 entrada / 1 salida", color="white", ha="center", va="center", fontsize=8, bbox=etiqueta)
+    ax.text(8.35, 6.05, "Praxedis Guerrero\n2 entradas / 2 salidas", color="white", ha="center", va="center", fontsize=8, bbox=etiqueta)
     ax.text(5, 7.2, "METROBÚS", color="white", ha="center", fontsize=8, rotation=90)
     ax.set_title("Geometría y sentidos documentados", fontweight="bold")
 
@@ -172,7 +173,7 @@ def graficar_ciclo_semaforico(ax):
             ax.broken_barh([(inicio, fin - inicio)], (y - 0.4, 0.8),
                             facecolors=COLOR_LUZ[color])
 
-    # Líneas verticales en los límites de los nueve intervalos.
+    # Líneas verticales en los límites de las seis fases documentadas.
     for numero, (inicio, fin, nombre) in enumerate(sem.FASES, 1):
         ax.axvline(inicio, color="black", linewidth=0.6, alpha=0.4)
         ax.text(inicio + (fin - inicio) / 2, len(claves) + 0.7, str(numero),
@@ -183,7 +184,7 @@ def graficar_ciclo_semaforico(ax):
     ax.set_yticklabels(list(reversed(etiquetas)), fontsize=9)
     ax.set_xlim(0, sem.CICLO_TOTAL)
     ax.set_xlabel("Segundo del ciclo semafórico (0-100 s)")
-    ax.set_title("Ciclo base: tres etapas de servicio y seis transiciones", fontweight="bold")
+    ax.set_title("Ciclo base documentado: seis fases (20+20+10+10+20+20 s)", fontweight="bold")
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.spines["left"].set_visible(False)
@@ -218,8 +219,8 @@ def generar_figura(semilla=None, muestreo_seg=30, salida="congestion_cruce_sombr
     fig.suptitle("Cruce Av. Sombrerete - Calle 6 - Av. Praxedis Guerrero (Querétaro)",
                  fontsize=15, fontweight="bold", y=0.995)
     fig.text(0.5, 0.965,
-              "Carriles y sentidos tomados de la imagen proporcionada; demanda, saturación y tiempos "
-              "son supuestos de modelación, no conteos viales reales",
+              "Carriles y sentidos tomados de la imagen; tiempos base tomados del programa adjunto; "
+              "demanda y saturación son supuestos, no conteos viales reales",
               ha="center", fontsize=9, style="italic", color="#555555")
 
     plt.tight_layout(rect=[0, 0, 1, 0.96])

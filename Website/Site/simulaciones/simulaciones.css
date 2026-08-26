@@ -60,15 +60,24 @@ h1 { font-size: clamp(2.15rem, 5vw, 5rem); line-height: .98; margin: 0; max-widt
 .intersection-map .lamp-red { fill: var(--red); }
 .intersection-map .lamp-yellow { fill: #5c553a; }
 .intersection-map .lamp-green { fill: #274e37; }
-.intersection-map .signal-ns .lamp-red { animation: ns-red var(--cycle) linear infinite; }
-.intersection-map .signal-bus .lamp-red { animation: bus-red var(--cycle) linear infinite; }
-.intersection-map .signal-ew .lamp-red { animation: ew-red var(--cycle) linear infinite; }
-.intersection-map .signal-ns .lamp-green { animation: ns-green var(--cycle) linear infinite; }
-.intersection-map .signal-bus .lamp-green { animation: bus-green var(--cycle) linear infinite; }
-.intersection-map .signal-ew .lamp-green { animation: ew-green var(--cycle) linear infinite; }
-.intersection-map .signal-ns .lamp-yellow { animation: ns-yellow var(--cycle) linear infinite; }
-.intersection-map .signal-bus .lamp-yellow { animation: bus-yellow var(--cycle) linear infinite; }
-.intersection-map .signal-ew .lamp-yellow { animation: ew-yellow var(--cycle) linear infinite; }
+.intersection-map .signal-nb .lamp-red { animation: nb-red var(--cycle) linear infinite; }
+.intersection-map .signal-nb .lamp-green { animation: nb-green var(--cycle) linear infinite; }
+.intersection-map .signal-nb .lamp-yellow { animation: nb-yellow var(--cycle) linear infinite; }
+.intersection-map .signal-sb .lamp-red { animation: sb-red var(--cycle) linear infinite; }
+.intersection-map .signal-sb .lamp-green { animation: sb-green var(--cycle) linear infinite; }
+.intersection-map .signal-sb .lamp-yellow { animation: sb-yellow var(--cycle) linear infinite; }
+.intersection-map .signal-bus-nb .lamp-red { animation: bus-nb-red var(--cycle) linear infinite; }
+.intersection-map .signal-bus-nb .lamp-green { animation: bus-nb-green var(--cycle) linear infinite; }
+.intersection-map .signal-bus-nb .lamp-yellow { animation: bus-nb-yellow var(--cycle) linear infinite; }
+.intersection-map .signal-bus-sb .lamp-red { animation: bus-sb-red var(--cycle) linear infinite; }
+.intersection-map .signal-bus-sb .lamp-green { animation: bus-sb-green var(--cycle) linear infinite; }
+.intersection-map .signal-bus-sb .lamp-yellow { animation: bus-sb-yellow var(--cycle) linear infinite; }
+.intersection-map .signal-c6 .lamp-red { animation: c6-red var(--cycle) linear infinite; }
+.intersection-map .signal-c6 .lamp-green { animation: c6-green var(--cycle) linear infinite; }
+.intersection-map .signal-c6 .lamp-yellow { animation: c6-yellow var(--cycle) linear infinite; }
+.intersection-map .signal-prax .lamp-red { animation: prax-red var(--cycle) linear infinite; }
+.intersection-map .signal-prax .lamp-green { animation: prax-green var(--cycle) linear infinite; }
+.intersection-map .signal-prax .lamp-yellow { animation: prax-yellow var(--cycle) linear infinite; }
 .geometry-list { display: grid; margin: 18px 0 0; }
 .geometry-row { align-items: start; border-top: 1px solid var(--line); display: grid; font-size: .76rem; gap: 12px; grid-template-columns: 1fr auto; padding: 11px 0; }
 .geometry-row span { color: var(--muted); }
@@ -84,6 +93,14 @@ h1 { font-size: clamp(2.15rem, 5vw, 5rem); line-height: .98; margin: 0; max-widt
 .timeline .red { background: var(--red); color: #fff; }
 .timeline .ns { flex: 35; } .timeline .bus { flex: 12; } .timeline .ew { flex: 37; }
 .timeline .y4 { flex: 4; } .timeline .y3 { flex: 3; } .timeline .r2 { flex: 2; }
+.phase-timeline .f20 { flex: 20; }
+.phase-timeline .f10 { flex: 10; }
+.phase-timeline .phase-f1 { background: #2f6feb; color: #fff; }
+.phase-timeline .phase-f2 { background: #2e9b63; color: #fff; }
+.phase-timeline .phase-f3 { background: #2d6ca9; color: #fff; }
+.phase-timeline .phase-f4 { background: #24527c; color: #fff; }
+.phase-timeline .phase-f5 { background: #d99012; color: #111; }
+.phase-timeline .phase-f6 { background: #c64f4c; color: #fff; }
 .cycle-progress { background: #27364b; height: 7px; overflow: hidden; }
 .cycle-progress i { animation: progress var(--cycle) linear infinite; background: var(--blue); display: block; height: 100%; transform-origin: left; }
 .phase-list { display: grid; margin-top: 18px; }
@@ -110,8 +127,7 @@ h1 { font-size: clamp(2.15rem, 5vw, 5rem); line-height: .98; margin: 0; max-widt
 .legend span::before { background: var(--c); content: ""; display: inline-block; height: 8px; margin-right: 6px; width: 8px; }
 .period-card { display: none; }
 #period-valley:checked ~ .page-shell .period-valley, #period-am:checked ~ .page-shell .period-am, #period-pm:checked ~ .page-shell .period-pm { display: block; }
-.period-card .level { color: var(--green); font-size: 2.5rem; font-weight: 800; margin: 0; }
-.period-card.period-am .level, .period-card.period-pm .level { color: var(--red); }
+.period-card .level { color: var(--red); font-size: 2.5rem; font-weight: 800; margin: 0; }
 .period-card dl { display: grid; grid-template-columns: 1fr auto; margin: 20px 0 0; }
 .period-card dt, .period-card dd { border-bottom: 1px solid var(--line); font-size: .77rem; margin: 0; padding: 10px 0; }
 .period-card dt { color: var(--muted); } .period-card dd { font-weight: 800; }
@@ -124,6 +140,7 @@ h1 { font-size: clamp(2.15rem, 5vw, 5rem); line-height: .98; margin: 0; max-widt
 .badge { border: 1px solid #52627a; color: var(--muted); font-size: .62rem; font-weight: 800; padding: 6px 8px; text-transform: uppercase; }
 .proposed .badge { border-color: var(--blue); color: #a9c2ff; }
 .plan-strip { display: grid; gap: 5px; grid-template-columns: repeat(3, 1fr); margin: 18px 0; }
+.plan-strip.phase-six { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 .plan-stage { background: #25344a; padding: 11px 9px; text-align: center; }
 .plan-stage small { color: var(--muted); display: block; font-size: .58rem; margin-bottom: 5px; text-transform: uppercase; }
 .plan-stage b { font-size: 1rem; }
@@ -141,25 +158,36 @@ h1 { font-size: clamp(2.15rem, 5vw, 5rem); line-height: .98; margin: 0; max-widt
 .method span { color: var(--muted); font-size: .68rem; line-height: 1.45; }
 .data-note { color: var(--muted); font-size: .72rem; margin: 18px 0 0; }
 @keyframes progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-@keyframes ns-red { 0%, 38.9% { fill: #40272b; } 39%, 100% { fill: var(--red); } }
-@keyframes bus-red { 0%, 40.9%, 56%, 100% { fill: var(--red); } 41%, 55.9% { fill: #40272b; } }
-@keyframes ew-red { 0%, 57.9%, 98%, 100% { fill: var(--red); } 58%, 97.9% { fill: #40272b; } }
-@keyframes ns-green { 0%, 34.9% { fill: var(--green); } 35%, 100% { fill: #274e37; } }
-@keyframes ns-yellow { 0%, 34.9%, 39%, 100% { fill: #5c553a; } 35%, 38.9% { fill: var(--yellow); } }
-@keyframes bus-green { 0%, 40.9%, 53%, 100% { fill: #274e37; } 41%, 52.9% { fill: var(--green); } }
-@keyframes bus-yellow { 0%, 52.9%, 56%, 100% { fill: #5c553a; } 53%, 55.9% { fill: var(--yellow); } }
-@keyframes ew-green { 0%, 57.9%, 95%, 100% { fill: #274e37; } 58%, 94.9% { fill: var(--green); } }
-@keyframes ew-yellow { 0%, 94.9%, 98%, 100% { fill: #5c553a; } 95%, 97.9% { fill: var(--yellow); } }
+@keyframes nb-red { 0%, 39.9% { fill: #40272b; } 40%, 100% { fill: var(--red); } }
+@keyframes nb-green { 0%, 36.9% { fill: var(--green); } 37%, 100% { fill: #274e37; } }
+@keyframes nb-yellow { 0%, 36.9%, 40%, 100% { fill: #5c553a; } 37%, 39.9% { fill: var(--yellow); } }
+@keyframes sb-red { 0%, 19.9%, 40%, 100% { fill: var(--red); } 20%, 39.9% { fill: #40272b; } }
+@keyframes sb-green { 0%, 19.9%, 37%, 100% { fill: #274e37; } 20%, 36.9% { fill: var(--green); } }
+@keyframes sb-yellow { 0%, 36.9%, 40%, 100% { fill: #5c553a; } 37%, 39.9% { fill: var(--yellow); } }
+@keyframes bus-nb-red { 0%, 39.9%, 50%, 100% { fill: var(--red); } 40%, 49.9% { fill: #40272b; } }
+@keyframes bus-nb-green { 0%, 39.9%, 47%, 100% { fill: #274e37; } 40%, 46.9% { fill: var(--green); } }
+@keyframes bus-nb-yellow { 0%, 46.9%, 50%, 100% { fill: #5c553a; } 47%, 49.9% { fill: var(--yellow); } }
+@keyframes bus-sb-red { 0%, 49.9%, 60%, 100% { fill: var(--red); } 50%, 59.9% { fill: #40272b; } }
+@keyframes bus-sb-green { 0%, 49.9%, 57%, 100% { fill: #274e37; } 50%, 56.9% { fill: var(--green); } }
+@keyframes bus-sb-yellow { 0%, 56.9%, 60%, 100% { fill: #5c553a; } 57%, 59.9% { fill: var(--yellow); } }
+@keyframes c6-red { 0%, 59.9%, 80%, 100% { fill: var(--red); } 60%, 79.9% { fill: #40272b; } }
+@keyframes c6-green { 0%, 59.9%, 77%, 100% { fill: #274e37; } 60%, 76.9% { fill: var(--green); } }
+@keyframes c6-yellow { 0%, 76.9%, 80%, 100% { fill: #5c553a; } 77%, 79.9% { fill: var(--yellow); } }
+@keyframes prax-red { 0%, 79.9%, 100% { fill: var(--red); } 80%, 99.9% { fill: #40272b; } }
+@keyframes prax-green { 0%, 79.9%, 97%, 100% { fill: #274e37; } 80%, 96.9% { fill: var(--green); } }
+@keyframes prax-yellow { 0%, 96.9%, 100% { fill: #5c553a; } 97%, 99.9% { fill: var(--yellow); } }
 @media (max-width: 960px) {
   .hero, .layout, .comparison-grid { grid-template-columns: 1fr; }
   .hero-copy { margin-top: -18px; }
   .facts, .method { grid-template-columns: repeat(2, 1fr); }
+  .plan-strip.phase-six { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (max-width: 580px) {
   .page-shell { padding-left: 11px; padding-right: 11px; }
   .topbar { align-items: flex-start; flex-direction: column-reverse; }
   .controls { align-items: stretch; } .controls strong { flex-basis: 100%; } .pause-label { margin-left: 0; }
   .facts, .method, .metrics { grid-template-columns: 1fr; }
+  .plan-strip.phase-six { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .metric { border-right: 0; } .bars { gap: 2px; height: 210px; } .bar::after { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .animated { animation-play-state: paused !important; } }

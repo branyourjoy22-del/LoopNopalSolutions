@@ -18,8 +18,8 @@
 
   <main class="page-shell">
     <div class="topbar"><a class="back-link" href="../index.html#simulaciones">← Volver al sitio</a><div class="brand"><span class="brand-mark">LN</span> Loop Nopal Solutions</div></div>
-    <header class="hero"><div><p class="kicker">Simulación 02 / Operación</p><h1>Ciclo base sobre la geometría real</h1></div><p class="hero-copy">El esquema distingue seis grupos de acceso: cuatro generales y dos exclusivos de Metrobús. El ciclo separa los tres grupos de conflicto mediante amarillos y despejes.</p></header>
-    <p class="notice"><strong>Lectura responsable:</strong> los carriles y sentidos provienen de la representación entregada. Tiempos, demanda y flujo de saturación son supuestos de modelación hasta medirlos en campo.</p>
+    <header class="hero"><div><p class="kicker">Simulación 02 / Operación</p><h1>Programa actual de seis fases</h1></div><p class="hero-copy">El ciclo vuelve a seguir la secuencia documentada: Sombrerete en dos etapas, cada sentido de Metrobús por separado, Calle 6 y Praxedis Guerrero.</p></header>
+    <p class="notice"><strong>Fuente temporal corregida:</strong> los seis bloques 20+20+10+10+20+20 s y sus amarillos finales de 3 s provienen del archivo de configuración proporcionado. La demanda y el flujo de saturación continúan como supuestos hasta medirlos en campo.</p>
 
     <section class="controls" aria-label="Controles visuales">
       <strong>Demanda supuesta</strong>
@@ -31,9 +31,9 @@
 
     <section class="facts" aria-label="Datos principales">
       <div class="fact"><small>Ciclo base</small><b>100 s</b></div>
-      <div class="fact"><small>Etapas de servicio</small><b>3</b></div>
-      <div class="fact"><small>Grupos de acceso</small><b>6</b></div>
-      <div class="fact"><small>Tiempo de despeje total</small><b>6 s</b></div>
+      <div class="fact"><small>Fases programadas</small><b>6</b></div>
+      <div class="fact"><small>Movimientos señalizados</small><b>7</b></div>
+      <div class="fact"><small>Amarillo acumulado</small><b>18 s</b></div>
     </section>
 
     <section class="layout">
@@ -60,39 +60,44 @@
           <text class="road-name" x="400" y="23">Sombrerete · norte</text><text class="road-name" x="400" y="628">Sombrerete · sur</text>
           <text class="road-name" x="110" y="252">Calle 6</text><text class="road-detail" x="110" y="269">1 entrada / 1 salida</text>
           <text class="road-name" x="685" y="252">Praxedis Guerrero</text><text class="road-detail" x="685" y="269">2 entradas / 2 salidas</text>
-          <g class="signal-ns" transform="translate(216 186)"><rect class="signal-body" width="58" height="20" rx="7"/><circle class="lamp-red animated" cx="12" cy="10" r="6"/><circle class="lamp-yellow animated" cx="29" cy="10" r="6"/><circle class="lamp-green animated" cx="46" cy="10" r="6"/></g>
-          <g class="signal-ns" transform="translate(526 434)"><rect class="signal-body" width="58" height="20" rx="7"/><circle class="lamp-red animated" cx="12" cy="10" r="6"/><circle class="lamp-yellow animated" cx="29" cy="10" r="6"/><circle class="lamp-green animated" cx="46" cy="10" r="6"/></g>
-          <g class="signal-ew" transform="translate(174 414)"><rect class="signal-body" width="58" height="20" rx="7"/><circle class="lamp-red animated" cx="12" cy="10" r="6"/><circle class="lamp-yellow animated" cx="29" cy="10" r="6"/><circle class="lamp-green animated" cx="46" cy="10" r="6"/></g>
-          <g class="signal-ew" transform="translate(568 206)"><rect class="signal-body" width="58" height="20" rx="7"/><circle class="lamp-red animated" cx="12" cy="10" r="6"/><circle class="lamp-yellow animated" cx="29" cy="10" r="6"/><circle class="lamp-green animated" cx="46" cy="10" r="6"/></g>
-          <g class="signal-bus" transform="translate(371 181)"><rect class="signal-body" width="58" height="20" rx="7"/><circle class="lamp-red animated" cx="12" cy="10" r="6"/><circle class="lamp-yellow animated" cx="29" cy="10" r="6"/><circle class="lamp-green animated" cx="46" cy="10" r="6"/></g>
+          <g class="signal-sb" transform="translate(216 186)"><rect class="signal-body" width="58" height="20" rx="7"/><circle class="lamp-red animated" cx="12" cy="10" r="6"/><circle class="lamp-yellow animated" cx="29" cy="10" r="6"/><circle class="lamp-green animated" cx="46" cy="10" r="6"/></g>
+          <g class="signal-nb" transform="translate(526 434)"><rect class="signal-body" width="58" height="20" rx="7"/><circle class="lamp-red animated" cx="12" cy="10" r="6"/><circle class="lamp-yellow animated" cx="29" cy="10" r="6"/><circle class="lamp-green animated" cx="46" cy="10" r="6"/></g>
+          <g class="signal-c6" transform="translate(174 414)"><rect class="signal-body" width="58" height="20" rx="7"/><circle class="lamp-red animated" cx="12" cy="10" r="6"/><circle class="lamp-yellow animated" cx="29" cy="10" r="6"/><circle class="lamp-green animated" cx="46" cy="10" r="6"/></g>
+          <g class="signal-prax" transform="translate(568 206)"><rect class="signal-body" width="58" height="20" rx="7"/><circle class="lamp-red animated" cx="12" cy="10" r="6"/><circle class="lamp-yellow animated" cx="29" cy="10" r="6"/><circle class="lamp-green animated" cx="46" cy="10" r="6"/></g>
+          <g class="signal-bus-sb" transform="translate(371 181)"><rect class="signal-body" width="58" height="20" rx="7"/><circle class="lamp-red animated" cx="12" cy="10" r="6"/><circle class="lamp-yellow animated" cx="29" cy="10" r="6"/><circle class="lamp-green animated" cx="46" cy="10" r="6"/></g>
+          <g class="signal-bus-nb" transform="translate(371 439)"><rect class="signal-body" width="58" height="20" rx="7"/><circle class="lamp-red animated" cx="12" cy="10" r="6"/><circle class="lamp-yellow animated" cx="29" cy="10" r="6"/><circle class="lamp-green animated" cx="46" cy="10" r="6"/></g>
         </svg>
         <div class="geometry-list"><div class="geometry-row"><span>Sombrerete general</span><b>2 carriles por sentido</b></div><div class="geometry-row"><span>Corredor central</span><b>1 carril Metrobús por sentido</b></div><div class="geometry-row"><span>Praxedis Guerrero</span><b>2 entradas / 2 salidas</b></div><div class="geometry-row"><span>Calle 6</span><b>1 entrada / 1 salida</b></div></div>
       </article>
 
       <article class="panel">
-        <h2>Secuencia base de servicio</h2><p class="sub">Tres verdes independientes y seis intervalos de transición · sin movimientos conflictivos simultáneos</p>
-        <div class="timeline" aria-label="Línea de tiempo de nueve intervalos"><span class="green ns">1</span><span class="yellow y4">2</span><span class="red r2">3</span><span class="green bus">4</span><span class="yellow y3">5</span><span class="red r2">6</span><span class="green ew">7</span><span class="yellow y3">8</span><span class="red r2">9</span></div>
+        <h2>Secuencia base de servicio</h2><p class="sub">Seis fases en el orden del programa actual · los últimos 3 s de cada fase son amarillos</p>
+        <div class="timeline phase-timeline" aria-label="Línea de tiempo de seis fases"><span class="phase-f1 f20">F1 · 20</span><span class="phase-f2 f20">F2 · 20</span><span class="phase-f3 f10">F3 · 10</span><span class="phase-f4 f10">F4 · 10</span><span class="phase-f5 f20">F5 · 20</span><span class="phase-f6 f20">F6 · 20</span></div>
         <div class="cycle-progress"><i class="animated"></i></div>
         <div class="phase-list">
-          <div class="phase-row"><span>1</span><b>Sombrerete general · verde</b><time>0–35 s</time></div><div class="phase-row"><span>2</span><b>Amarillo Sombrerete</b><time>35–39 s</time></div><div class="phase-row"><span>3</span><b>Todo rojo · despeje</b><time>39–41 s</time></div>
-          <div class="phase-row"><span>4</span><b>Metrobús · ambos sentidos</b><time>41–53 s</time></div><div class="phase-row"><span>5</span><b>Amarillo Metrobús</b><time>53–56 s</time></div><div class="phase-row"><span>6</span><b>Todo rojo · despeje</b><time>56–58 s</time></div>
-          <div class="phase-row"><span>7</span><b>Calle 6 y Praxedis · verde</b><time>58–95 s</time></div><div class="phase-row"><span>8</span><b>Amarillo oriente-poniente</b><time>95–98 s</time></div><div class="phase-row"><span>9</span><b>Todo rojo · reinicio</b><time>98–100 s</time></div>
+          <div class="phase-row"><span>1</span><b>Sombrerete sur → norte + giro protegido</b><time>0–20 s</time></div>
+          <div class="phase-row"><span>2</span><b>Sombrerete ambos sentidos · frente</b><time>20–40 s</time></div>
+          <div class="phase-row"><span>3</span><b>Metrobús sur → norte</b><time>40–50 s</time></div>
+          <div class="phase-row"><span>4</span><b>Metrobús norte → sur</b><time>50–60 s</time></div>
+          <div class="phase-row"><span>5</span><b>Calle 6 poniente → oriente</b><time>60–80 s</time></div>
+          <div class="phase-row"><span>6</span><b>Praxedis oriente → poniente</b><time>80–100 s</time></div>
         </div>
       </article>
 
       <article class="panel wide">
         <h2>Demanda y grado de saturación por grupo</h2><p class="sub">Flujo de saturación supuesto: 1,750 veh/h/carril general y 900 unidades/h/carril Metrobús. x ≥ 1 indica demanda igual o superior a la capacidad efectiva del ciclo.</p>
         <div class="table-wrap"><table class="data-table"><thead><tr><th>Grupo de acceso</th><th>Carriles</th><th>Verde</th><th>Demanda supuesta</th><th>Capacidad efectiva</th><th>Grado x</th></tr></thead><tbody>
-          <tr><td>Sombrerete norte → sur</td><td>2</td><td>35 s</td><td><span class="scenario-value scenario-valley">500</span><span class="scenario-value scenario-reference">850</span><span class="scenario-value scenario-peak">1,250</span> veh/h</td><td>1,225 veh/h</td><td><span class="scenario-value scenario-valley">0.41</span><span class="scenario-value scenario-reference">0.69</span><span class="scenario-value scenario-peak warning">1.02</span></td></tr>
-          <tr><td>Sombrerete sur → norte</td><td>2</td><td>35 s</td><td><span class="scenario-value scenario-valley">450</span><span class="scenario-value scenario-reference">800</span><span class="scenario-value scenario-peak">1,150</span> veh/h</td><td>1,225 veh/h</td><td><span class="scenario-value scenario-valley">0.37</span><span class="scenario-value scenario-reference">0.65</span><span class="scenario-value scenario-peak caution">0.94</span></td></tr>
-          <tr class="bus-row"><td>Metrobús norte → sur</td><td>1</td><td>12 s</td><td><span class="scenario-value scenario-valley">20</span><span class="scenario-value scenario-reference">32</span><span class="scenario-value scenario-peak">48</span> unid/h</td><td>108 unid/h</td><td><span class="scenario-value scenario-valley">0.19</span><span class="scenario-value scenario-reference">0.30</span><span class="scenario-value scenario-peak">0.44</span></td></tr>
-          <tr class="bus-row"><td>Metrobús sur → norte</td><td>1</td><td>12 s</td><td><span class="scenario-value scenario-valley">20</span><span class="scenario-value scenario-reference">32</span><span class="scenario-value scenario-peak">48</span> unid/h</td><td>108 unid/h</td><td><span class="scenario-value scenario-valley">0.19</span><span class="scenario-value scenario-reference">0.30</span><span class="scenario-value scenario-peak">0.44</span></td></tr>
-          <tr><td>Calle 6 poniente → oriente</td><td>1</td><td>37 s</td><td><span class="scenario-value scenario-valley">180</span><span class="scenario-value scenario-reference">300</span><span class="scenario-value scenario-peak">420</span> veh/h</td><td>648 veh/h</td><td><span class="scenario-value scenario-valley">0.28</span><span class="scenario-value scenario-reference">0.46</span><span class="scenario-value scenario-peak">0.65</span></td></tr>
-          <tr><td>Praxedis oriente → poniente</td><td>2</td><td>37 s</td><td><span class="scenario-value scenario-valley">650</span><span class="scenario-value scenario-reference">950</span><span class="scenario-value scenario-peak">1,350</span> veh/h</td><td>1,295 veh/h</td><td><span class="scenario-value scenario-valley">0.50</span><span class="scenario-value scenario-reference">0.73</span><span class="scenario-value scenario-peak warning">1.04</span></td></tr>
+          <tr><td>Giro protegido de Sombrerete</td><td>Sin carril documentado</td><td>17 s</td><td>Sin aforo separado</td><td>No evaluada</td><td>—</td></tr>
+          <tr><td>Sombrerete sur → norte · frente</td><td>2</td><td>37 s</td><td><span class="scenario-value scenario-valley">450</span><span class="scenario-value scenario-reference">800</span><span class="scenario-value scenario-peak">1,150</span> veh/h</td><td>1,295 veh/h</td><td><span class="scenario-value scenario-valley">0.35</span><span class="scenario-value scenario-reference">0.62</span><span class="scenario-value scenario-peak caution">0.89</span></td></tr>
+          <tr><td>Sombrerete norte → sur · frente</td><td>2</td><td>17 s</td><td><span class="scenario-value scenario-valley">500</span><span class="scenario-value scenario-reference">850</span><span class="scenario-value scenario-peak">1,250</span> veh/h</td><td>595 veh/h</td><td><span class="scenario-value scenario-valley caution">0.84</span><span class="scenario-value scenario-reference warning">1.43</span><span class="scenario-value scenario-peak warning">2.10</span></td></tr>
+          <tr class="bus-row"><td>Metrobús sur → norte</td><td>1</td><td>7 s</td><td><span class="scenario-value scenario-valley">20</span><span class="scenario-value scenario-reference">32</span><span class="scenario-value scenario-peak">48</span> unid/h</td><td>63 unid/h</td><td><span class="scenario-value scenario-valley">0.32</span><span class="scenario-value scenario-reference">0.51</span><span class="scenario-value scenario-peak caution">0.76</span></td></tr>
+          <tr class="bus-row"><td>Metrobús norte → sur</td><td>1</td><td>7 s</td><td><span class="scenario-value scenario-valley">20</span><span class="scenario-value scenario-reference">32</span><span class="scenario-value scenario-peak">48</span> unid/h</td><td>63 unid/h</td><td><span class="scenario-value scenario-valley">0.32</span><span class="scenario-value scenario-reference">0.51</span><span class="scenario-value scenario-peak caution">0.76</span></td></tr>
+          <tr><td>Calle 6 poniente → oriente</td><td>1</td><td>17 s</td><td><span class="scenario-value scenario-valley">180</span><span class="scenario-value scenario-reference">300</span><span class="scenario-value scenario-peak">420</span> veh/h</td><td>298 veh/h</td><td><span class="scenario-value scenario-valley">0.61</span><span class="scenario-value scenario-reference warning">1.01</span><span class="scenario-value scenario-peak warning">1.41</span></td></tr>
+          <tr><td>Praxedis oriente → poniente</td><td>2</td><td>17 s</td><td><span class="scenario-value scenario-valley">650</span><span class="scenario-value scenario-reference">950</span><span class="scenario-value scenario-peak">1,350</span> veh/h</td><td>595 veh/h</td><td><span class="scenario-value scenario-valley warning">1.09</span><span class="scenario-value scenario-reference warning">1.60</span><span class="scenario-value scenario-peak warning">2.27</span></td></tr>
         </tbody></table></div>
       </article>
     </section>
-    <p class="data-note">Modelo mesoscópico de cola con paso de 1 s. No incluye giros no documentados, demanda peatonal, bloqueo aguas abajo, paradas de Metrobús ni longitud física de almacenamiento.</p>
+    <p class="data-note">El giro protegido se conserva porque aparece en el programa temporal, pero no se le asigna demanda independiente: la imagen no documenta un carril ni un aforo específico. El modelo tampoco incluye peatones, bloqueo aguas abajo, paradas de Metrobús ni longitud física de almacenamiento.</p>
   </main>
 </body>
 </html>
