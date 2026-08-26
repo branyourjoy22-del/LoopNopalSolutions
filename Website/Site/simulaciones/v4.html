@@ -3,81 +3,68 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Comparación visual de dos planes semafóricos para el cruce de avenida Sombrerete.">
-  <title>Plan actual vs. optimizado | Loop Nopal Solutions</title>
+  <meta name="description" content="Comparación reproducible de dos planes semafóricos para el cruce Sombrerete, Calle 6 y Praxedis Guerrero.">
+  <title>Plan base vs. calculado | Loop Nopal Solutions</title>
   <link rel="stylesheet" href="simulaciones.css">
 </head>
 <body>
-  <input class="state-input" type="radio" name="speed" id="speed-slow">
-  <input class="state-input" type="radio" name="speed" id="speed-normal" checked>
-  <input class="state-input" type="radio" name="speed" id="speed-fast">
-  <input class="state-input" type="radio" name="demand" id="demand-low">
-  <input class="state-input" type="radio" name="demand" id="demand-medium" checked>
-  <input class="state-input" type="radio" name="demand" id="demand-high">
-  <input class="state-input" type="checkbox" id="pause">
+  <input class="state-input" type="radio" name="demand" id="demand-valley">
+  <input class="state-input" type="radio" name="demand" id="demand-reference" checked>
+  <input class="state-input" type="radio" name="demand" id="demand-peak">
 
   <main class="page-shell">
-    <div class="topbar">
-      <a class="back-link" href="../index.html#simulaciones">← Volver al sitio</a>
-      <div class="brand"><span class="brand-mark">LN</span> Loop Nopal Solutions</div>
-    </div>
+    <div class="topbar"><a class="back-link" href="../index.html#simulaciones">← Volver al sitio</a><div class="brand"><span class="brand-mark">LN</span> Loop Nopal Solutions</div></div>
+    <header class="hero"><div><p class="kicker">Simulación 01 / Comparativa</p><h1>Plan base frente a reparto calculado</h1></div><p class="hero-copy">Ambos planes reciben exactamente las mismas llegadas en cada corrida. La propuesta distribuye el verde según la demanda crítica de cada grupo y conserva mínimos de seguridad operativa.</p></header>
+    <p class="notice"><strong>Corrección metodológica:</strong> “base” no significa plan actualmente instalado y “calculado” no significa optimización validada. Sin el programa del controlador y aforos locales, ambos siguen siendo escenarios exploratorios.</p>
 
-    <header class="hero">
-      <div><p class="kicker">Simulación 01 / Comparativa</p><h1>Plan actual frente a plan optimizado</h1></div>
-      <p class="hero-copy">Dos ciclos semafóricos observados bajo la misma demanda demostrativa. La animación muestra cómo una distribución distinta puede reducir la cola representada.</p>
-    </header>
-    <p class="notice"><strong>Alcance:</strong> los valores mostrados representan escenarios demostrativos y no sustituyen una medición vial.</p>
-
-    <section class="controls" aria-label="Controles visuales">
-      <strong>Demanda</strong>
-      <label class="control-label" for="demand-low">Valle</label>
-      <label class="control-label" for="demand-medium">Media</label>
-      <label class="control-label" for="demand-high">Pico</label>
-      <strong>Velocidad</strong>
-      <label class="control-label" for="speed-slow">0.5×</label>
-      <label class="control-label" for="speed-normal">1×</label>
-      <label class="control-label" for="speed-fast">2×</label>
-      <label class="control-label pause-label" for="pause"><span class="pause-when-running">Pausar</span><span class="play-when-paused">Reanudar</span></label>
+    <section class="controls" aria-label="Seleccionar demanda">
+      <strong>Escenario de demanda</strong>
+      <label class="control-label" for="demand-valley">Valle</label><label class="control-label" for="demand-reference">Referencia</label><label class="control-label" for="demand-peak">Pico</label>
     </section>
 
-    <section class="dashboard comparison" aria-label="Comparación de planes">
-      <article class="sim-card current">
-        <header class="card-header"><div><h2>Plan actual</h2><p>Ciclo de referencia · 100 segundos</p></div><span class="badge">Base</span></header>
-        <div class="intersection" aria-label="Cruce animado con el plan actual">
-          <div class="road-v"></div><div class="road-h"></div><div class="crossing"></div>
-          <span class="road-label label-sombrerete">Av. Sombrerete</span><span class="road-label label-calle">Calle 6</span><span class="road-label label-praxedis">Práxedis</span>
-          <span class="signal signal-north"><i class="animated"></i><i class="animated"></i><i class="animated"></i></span>
-          <span class="signal signal-south"><i class="animated"></i><i class="animated"></i><i class="animated"></i></span>
-          <span class="signal signal-east"><i class="animated"></i><i class="animated"></i><i class="animated"></i></span>
-          <span class="signal signal-west"><i class="animated"></i><i class="animated"></i><i class="animated"></i></span>
-          <i class="car horizontal animated"></i><i class="car horizontal alt animated"></i><i class="car vertical animated"></i><i class="car vertical alt animated"></i><i class="queue animated"></i>
-        </div>
+    <section class="comparison-grid" aria-label="Comparación estadística de planes">
+      <article class="compare-card">
+        <header class="compare-head"><div><h2>Plan base</h2><p>Ciclo fijo de referencia</p></div><span class="badge">Base</span></header>
+        <div class="plan-strip"><div class="plan-stage"><small>Ciclo</small><b>100 s</b></div><div class="plan-stage"><small>Somb. / Bus</small><b>35 / 12 s</b></div><div class="plan-stage"><small>Calle 6 + Prax.</small><b>37 s</b></div></div>
         <div class="metrics">
-          <div class="metric"><small>Cola representada</small><b><span class="demand-value demand-low">12</span><span class="demand-value demand-medium">31</span><span class="demand-value demand-high">54</span> veh.</b></div>
-          <div class="metric"><small>Espera ilustrativa</small><b><span class="demand-value demand-low">18</span><span class="demand-value demand-medium">46</span><span class="demand-value demand-high">81</span> s</b></div>
-          <div class="metric"><small>Saturación</small><b><span class="demand-value demand-low">Baja</span><span class="demand-value demand-medium">Media</span><span class="demand-value demand-high">Alta</span></b></div>
+          <div class="metric"><small>Cola promedio total</small><b><span class="scenario-value scenario-valley">13.4</span><span class="scenario-value scenario-reference">24.7</span><span class="scenario-value scenario-peak">143.8</span> veh</b><em>Rango 10–90%: <span class="scenario-value scenario-valley">12.6–14.2</span><span class="scenario-value scenario-reference">23.8–25.5</span><span class="scenario-value scenario-peak">91.5–190.9</span></em></div>
+          <div class="metric"><small>Demora detenida</small><b><span class="scenario-value scenario-valley">26.7</span><span class="scenario-value scenario-reference">30.1</span><span class="scenario-value scenario-peak">125.2</span> s/veh</b><em>Rango 10–90%: <span class="scenario-value scenario-valley">25.9–27.5</span><span class="scenario-value scenario-reference">29.2–30.9</span><span class="scenario-value scenario-peak">80.0–164.0</span></em></div>
+          <div class="metric"><small>Cola total percentil 95</small><b><span class="scenario-value scenario-valley">23.1</span><span class="scenario-value scenario-reference">38.0</span><span class="scenario-value scenario-peak">212.0</span> veh</b></div>
+          <div class="metric"><small>Máximo grado x</small><b><span class="scenario-value scenario-valley">0.50</span><span class="scenario-value scenario-reference">0.73</span><span class="scenario-value scenario-peak risk">1.04</span></b><em>x ≥ 1: cola creciente</em></div>
         </div>
       </article>
 
-      <article class="sim-card optimized">
-        <header class="card-header"><div><h2>Plan optimizado</h2><p>Ciclo propuesto · 120 segundos</p></div><span class="badge">Propuesta</span></header>
-        <div class="intersection" aria-label="Cruce animado con el plan optimizado">
-          <div class="road-v"></div><div class="road-h"></div><div class="crossing"></div>
-          <span class="road-label label-sombrerete">Av. Sombrerete</span><span class="road-label label-calle">Calle 6</span><span class="road-label label-praxedis">Práxedis</span>
-          <span class="signal signal-north"><i class="animated"></i><i class="animated"></i><i class="animated"></i></span>
-          <span class="signal signal-south"><i class="animated"></i><i class="animated"></i><i class="animated"></i></span>
-          <span class="signal signal-east"><i class="animated"></i><i class="animated"></i><i class="animated"></i></span>
-          <span class="signal signal-west"><i class="animated"></i><i class="animated"></i><i class="animated"></i></span>
-          <i class="car horizontal animated"></i><i class="car horizontal alt animated"></i><i class="car vertical animated"></i><i class="car vertical alt animated"></i><i class="queue animated"></i>
+      <article class="compare-card proposed">
+        <header class="compare-head"><div><h2>Plan calculado</h2><p>Reparto por demanda crítica</p></div><span class="badge">Propuesta</span></header>
+        <div class="plan-strip">
+          <div class="plan-stage"><small>Ciclo</small><b><span class="scenario-value scenario-valley">70</span><span class="scenario-value scenario-reference">70</span><span class="scenario-value scenario-peak">142</span> s</b></div>
+          <div class="plan-stage"><small>Somb. / Bus</small><b><span class="scenario-value scenario-valley">19 / 10</span><span class="scenario-value scenario-reference">21 / 10</span><span class="scenario-value scenario-peak">56 / 10</span> s</b></div>
+          <div class="plan-stage"><small>Calle 6 + Prax.</small><b><span class="scenario-value scenario-valley">25</span><span class="scenario-value scenario-reference">23</span><span class="scenario-value scenario-peak">60</span> s</b></div>
         </div>
         <div class="metrics">
-          <div class="metric"><small>Cola representada</small><b class="good"><span class="demand-value demand-low">7</span><span class="demand-value demand-medium">18</span><span class="demand-value demand-high">34</span> veh.</b></div>
-          <div class="metric"><small>Espera ilustrativa</small><b class="good"><span class="demand-value demand-low">11</span><span class="demand-value demand-medium">28</span><span class="demand-value demand-high">52</span> s</b></div>
-          <div class="metric"><small>Reducción visual</small><b class="good"><span class="demand-value demand-low">42</span><span class="demand-value demand-medium">41</span><span class="demand-value demand-high">37</span>%</b></div>
+          <div class="metric"><small>Cola promedio total</small><b class="good"><span class="scenario-value scenario-valley">11.1</span><span class="scenario-value scenario-reference">21.9</span><span class="scenario-value scenario-peak">59.6</span> veh</b><em>Rango 10–90%: <span class="scenario-value scenario-valley">10.6–11.7</span><span class="scenario-value scenario-reference">20.7–23.3</span><span class="scenario-value scenario-peak">51.6–66.2</span></em></div>
+          <div class="metric"><small>Demora detenida</small><b class="good"><span class="scenario-value scenario-valley">22.0</span><span class="scenario-value scenario-reference">26.7</span><span class="scenario-value scenario-peak">50.5</span> s/veh</b><em>Rango 10–90%: <span class="scenario-value scenario-valley">21.4–22.8</span><span class="scenario-value scenario-reference">25.3–28.1</span><span class="scenario-value scenario-peak">45.4–55.9</span></em></div>
+          <div class="metric"><small>Cola total percentil 95</small><b class="good"><span class="scenario-value scenario-valley">19.1</span><span class="scenario-value scenario-reference">34.5</span><span class="scenario-value scenario-peak">81.0</span> veh</b></div>
+          <div class="metric"><small>Máximo grado x</small><b><span class="scenario-value scenario-valley">0.53</span><span class="scenario-value scenario-reference">0.83</span><span class="scenario-value scenario-peak">0.91</span></b><em>Todos los grupos por debajo de 1</em></div>
         </div>
+        <p class="delta"><span class="scenario-value scenario-valley">Reducción media estimada: 17% en cola y 18% en demora.</span><span class="scenario-value scenario-reference">Reducción media estimada: 11% en cola y 11% en demora.</span><span class="scenario-value scenario-peak">Reducción media estimada: 59% en cola y 60% en demora; la amplitud del rango revela alta incertidumbre.</span></p>
       </article>
     </section>
-    <p class="data-note">Los valores son una comparación ilustrativa y permanecen precalculados; deberán sustituirse por resultados validados antes de tomar decisiones operativas.</p>
+
+    <section class="panel" style="margin-top:16px">
+      <h2>Demanda aplicada y saturación por acceso</h2><p class="sub">La propuesta atiende simultáneamente sentidos opuestos compatibles; no se incorporan giros no documentados.</p>
+      <div class="table-wrap"><table class="data-table"><thead><tr><th>Grupo</th><th>Carriles</th><th>Demanda</th><th>x base</th><th>x calculado</th></tr></thead><tbody>
+        <tr><td>Sombrerete norte → sur</td><td>2</td><td><span class="scenario-value scenario-valley">500</span><span class="scenario-value scenario-reference">850</span><span class="scenario-value scenario-peak">1,250</span> veh/h</td><td><span class="scenario-value scenario-valley">0.41</span><span class="scenario-value scenario-reference">0.69</span><span class="scenario-value scenario-peak warning">1.02</span></td><td><span class="scenario-value scenario-valley">0.53</span><span class="scenario-value scenario-reference">0.81</span><span class="scenario-value scenario-peak">0.91</span></td></tr>
+        <tr><td>Sombrerete sur → norte</td><td>2</td><td><span class="scenario-value scenario-valley">450</span><span class="scenario-value scenario-reference">800</span><span class="scenario-value scenario-peak">1,150</span> veh/h</td><td><span class="scenario-value scenario-valley">0.37</span><span class="scenario-value scenario-reference">0.65</span><span class="scenario-value scenario-peak">0.94</span></td><td><span class="scenario-value scenario-valley">0.47</span><span class="scenario-value scenario-reference">0.76</span><span class="scenario-value scenario-peak">0.83</span></td></tr>
+        <tr class="bus-row"><td>Metrobús norte → sur</td><td>1</td><td><span class="scenario-value scenario-valley">20</span><span class="scenario-value scenario-reference">32</span><span class="scenario-value scenario-peak">48</span> unid/h</td><td><span class="scenario-value scenario-valley">0.19</span><span class="scenario-value scenario-reference">0.30</span><span class="scenario-value scenario-peak">0.44</span></td><td><span class="scenario-value scenario-valley">0.16</span><span class="scenario-value scenario-reference">0.25</span><span class="scenario-value scenario-peak">0.76</span></td></tr>
+        <tr class="bus-row"><td>Metrobús sur → norte</td><td>1</td><td><span class="scenario-value scenario-valley">20</span><span class="scenario-value scenario-reference">32</span><span class="scenario-value scenario-peak">48</span> unid/h</td><td><span class="scenario-value scenario-valley">0.19</span><span class="scenario-value scenario-reference">0.30</span><span class="scenario-value scenario-peak">0.44</span></td><td><span class="scenario-value scenario-valley">0.16</span><span class="scenario-value scenario-reference">0.25</span><span class="scenario-value scenario-peak">0.76</span></td></tr>
+        <tr><td>Calle 6 poniente → oriente</td><td>1</td><td><span class="scenario-value scenario-valley">180</span><span class="scenario-value scenario-reference">300</span><span class="scenario-value scenario-peak">420</span> veh/h</td><td><span class="scenario-value scenario-valley">0.28</span><span class="scenario-value scenario-reference">0.46</span><span class="scenario-value scenario-peak">0.65</span></td><td><span class="scenario-value scenario-valley">0.29</span><span class="scenario-value scenario-reference">0.52</span><span class="scenario-value scenario-peak">0.57</span></td></tr>
+        <tr><td>Praxedis oriente → poniente</td><td>2</td><td><span class="scenario-value scenario-valley">650</span><span class="scenario-value scenario-reference">950</span><span class="scenario-value scenario-peak">1,350</span> veh/h</td><td><span class="scenario-value scenario-valley">0.50</span><span class="scenario-value scenario-reference">0.73</span><span class="scenario-value scenario-peak warning">1.04</span></td><td><span class="scenario-value scenario-valley">0.52</span><span class="scenario-value scenario-reference">0.83</span><span class="scenario-value scenario-peak">0.91</span></td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section class="method" aria-label="Método y supuestos"><div><b>20 corridas</b><span>Semillas fijas y las mismas llegadas para ambos planes; 60 min medidos tras 15 min de calentamiento.</span></div><div><b>Capacidad</b><span>1,750 veh/h/carril general y 900 unidades/h/carril Metrobús, valores conservadores no observados.</span></div><div><b>Reparto</b><span>Proporcional al mayor flujo/capacidad de cada etapa, con verdes mínimos e interverdes constantes.</span></div><div><b>Pendiente de campo</b><span>Aforos por movimiento, giros, peatones, headways, colas físicas y tiempos reales del controlador.</span></div></section>
+    <p class="data-note">Una reducción simulada no garantiza el mismo efecto en calle. La propuesta debe recalibrarse, comprobar conflictos y validarse por una persona especialista antes de cualquier implementación.</p>
   </main>
 </body>
 </html>
