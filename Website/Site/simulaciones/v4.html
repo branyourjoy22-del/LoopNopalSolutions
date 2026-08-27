@@ -149,6 +149,22 @@
   .sb-stat-delta.mejor{ color:var(--verde); }
   .sb-stat-delta.peor{ color:var(--rojo); }
 
+  .sb-findings{
+    display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0;
+    margin:2px 0 10px; border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+  }
+  .sb-finding{ min-width:0; padding:15px 18px; }
+  .sb-finding + .sb-finding{ border-left:1px solid var(--border); }
+  .sb-finding span{ display:block; color:var(--muted); font-size:.7rem; text-transform:uppercase; margin-bottom:5px; }
+  .sb-finding strong{ display:block; color:var(--verde); font-family:'JetBrains Mono',monospace; font-size:1.35rem; }
+  .sb-finding p{ margin:5px 0 0; color:var(--text); font-size:.78rem; line-height:1.45; }
+  .sb-model-note{ margin:0 0 16px; color:var(--muted); font-size:.72rem; line-height:1.5; }
+  .sb-model-note b{ color:var(--text); }
+  @media (max-width:700px){
+    .sb-findings{ grid-template-columns:1fr; }
+    .sb-finding + .sb-finding{ border-left:0; border-top:1px solid var(--border); }
+  }
+
   .sb-vs-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
   @media (max-width:880px){ .sb-vs-grid{ grid-template-columns:1fr; } }
   .sb-vs-grid .panel h2{ display:flex; align-items:center; gap:8px; }
@@ -163,7 +179,7 @@
 <body>
 <div class="app">
 
-  <div class="sb-intro"><b>Simulación comparativa &middot; Plan actual vs. optimizado</b><br>Las dos corren con el mismo reloj y reciben exactamente los mismos vehiculos simulados cada segundo &mdash; la unica diferencia es el plan de fases del semaforo.</div>
+  <div class="sb-intro"><b>Simulación comparativa &middot; Plan actual vs. optimizado</b><br>Las dos corren con el mismo reloj y reciben exactamente los mismos vehículos simulados cada segundo; la única diferencia es el plan de fases del semáforo.</div>
 
   <div class="panel" style="margin-bottom:16px;">
     <div class="sb-term-controles">
@@ -181,36 +197,55 @@
     </div>
     <div class="reloj-wrap">
       <div class="reloj mono" id="v4_reloj">06:00:00</div>
-      <div class="badge" id="v4_badgePico">trafico normal</div>
+      <div class="badge" id="v4_badgePico">tráfico normal</div>
     </div>
   </div>
 
   <div class="sb-scoreboard">
     <div class="sb-stat-card">
-      <div class="sb-stat-title">Cola total ahora (vehiculos en espera, suma de 7 accesos)</div>
+      <div class="sb-stat-title">Cola total ahora (vehículos en espera, suma de 7 accesos)</div>
       <div class="sb-stat-row"><span>Actual</span><b id="v4_sb1_actual">0</b></div>
       <div class="sb-stat-row"><span>Optimizada</span><b id="v4_sb1_opt">0</b></div>
       <div class="sb-stat-delta" id="v4_sb1_delta">—</div>
     </div>
     <div class="sb-stat-card">
-      <div class="sb-stat-title">Promedio de cola desde que inicio la corrida</div>
+      <div class="sb-stat-title">Promedio de cola desde que inició la corrida</div>
       <div class="sb-stat-row"><span>Actual</span><b id="v4_sb2_actual">0</b></div>
       <div class="sb-stat-row"><span>Optimizada</span><b id="v4_sb2_opt">0</b></div>
       <div class="sb-stat-delta" id="v4_sb2_delta">—</div>
     </div>
     <div class="sb-stat-card">
-      <div class="sb-stat-title">Segundos-acceso acumulados en congestion ALTA o SATURADA</div>
+      <div class="sb-stat-title">Segundos-acceso acumulados en congestión ALTA o SATURADA</div>
       <div class="sb-stat-row"><span>Actual</span><b id="v4_sb3_actual">0 s</b></div>
       <div class="sb-stat-row"><span>Optimizada</span><b id="v4_sb3_opt">0 s</b></div>
       <div class="sb-stat-delta" id="v4_sb3_delta">—</div>
     </div>
     <div class="sb-stat-card">
-      <div class="sb-stat-title">Tiempo de espera estimado por vehiculo (cola promedio &divide; tasa de llegada)</div>
+      <div class="sb-stat-title">Tiempo de espera estimado por vehículo (cola promedio &divide; tasa de llegada)</div>
       <div class="sb-stat-row"><span>Actual</span><b id="v4_sb4_actual">0.0 s</b></div>
       <div class="sb-stat-row"><span>Optimizada</span><b id="v4_sb4_opt">0.0 s</b></div>
       <div class="sb-stat-delta" id="v4_sb4_delta">—</div>
     </div>
   </div>
+
+  <section class="sb-findings" aria-label="Resultados del escenario simulado">
+    <div class="sb-finding">
+      <span>Cola promedio</span>
+      <strong>-42%</strong>
+      <p>De 65.7 a 38.3 vehículos en espera en los siete accesos.</p>
+    </div>
+    <div class="sb-finding">
+      <span>Espera estimada</span>
+      <strong>-44 s</strong>
+      <p>De 106 a 62 segundos por vehículo, conforme a la Ley de Little.</p>
+    </div>
+    <div class="sb-finding">
+      <span>Congestión crítica</span>
+      <strong>-34%</strong>
+      <p>Menos tiempo en nivel alto o saturado; en hora pico, la saturación baja 24%.</p>
+    </div>
+  </section>
+  <p class="sb-model-note"><b>Alcance:</b> estimaciones de un modelo de 24 horas; no sustituyen aforos ni resultados de campo.</p>
 
   <div class="sb-vs-grid">
     <div class="panel">
@@ -238,7 +273,7 @@
       </table>
     </div>
   </div>
-  <div class="sb-nota">Ambos paneles muestran los mismos vehiculos llegando cada segundo; solo cambia como el semaforo los atiende.</div>
+  <div class="sb-nota">Ambos paneles muestran los mismos vehículos llegando cada segundo; solo cambia cómo los atiende el semáforo.</div>
 
 </div>
 <script>
@@ -705,7 +740,7 @@ function crearMotorCompleto(cfg){
     const pico = esHoraPico(segDiaActual);
     if(elReloj) elReloj.textContent = hhmmss(segDiaActual);
     if(elBadgePico){
-      elBadgePico.textContent = pico ? '\u{1F534} hora pico' : '\u{1F7E2} trafico normal';
+      elBadgePico.textContent = pico ? '\u{1F534} hora pico' : '\u{1F7E2} tráfico normal';
       elBadgePico.className = 'badge' + (pico?' pico':'');
     }
     elFaseTexto.textContent = faseDe(FASES, tCiclo);
@@ -875,7 +910,7 @@ function crearMotorCompleto(cfg){
   function renderTodo(){
     const pico = esHoraPico(segCompartido);
     elReloj.textContent = hhmmss(segCompartido);
-    elBadge.textContent = pico? '\u{1F534} hora pico':'\u{1F7E2} trafico normal';
+    elBadge.textContent = pico? '\u{1F534} hora pico':'\u{1F7E2} tráfico normal';
     elBadge.className = 'badge'+(pico?' pico':'');
     engA.render(); engB.render();
     renderScoreboard();
