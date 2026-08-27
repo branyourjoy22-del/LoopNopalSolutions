@@ -11,6 +11,7 @@ Thumbs.db
 # Temporary output
 *.tmp
 *.log
+dist/
 
 # Legacy dependency cache (not used by the static site)
 node_modules/
