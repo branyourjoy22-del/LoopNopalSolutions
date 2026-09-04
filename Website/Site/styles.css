@@ -90,12 +90,20 @@ h2 { font-size: clamp(2rem, 4vw, 4rem); line-height: 1.02; margin-bottom: 0; }
 .phase-strip i:nth-child(1), .phase-strip i:nth-child(4) { background: var(--green); }
 .phase-strip i:nth-child(2), .phase-strip i:nth-child(5) { background: var(--amber); }
 .phase-strip i:nth-child(3), .phase-strip i:nth-child(6) { background: var(--red); }
-.amber > a { background: var(--amber); }
-.red > a { background: var(--red); }
+.simulation-card.full { grid-column: 1 / -1; padding: 32px; }
+.simulation-card.full .card-topline span:last-child { align-items: center; border-color: var(--green); color: var(--green); display: inline-flex; gap: 7px; }
+.simulation-card.full .card-topline span:last-child::before { background: var(--green); border-radius: 50%; box-shadow: 0 0 0 4px rgb(42 169 105 / 20%); content: ""; height: 7px; width: 7px; }
+.card-full-grid { display: grid; gap: 40px; grid-template-columns: 1.3fr 1fr; margin: 30px 0 26px; }
+.card-full-grid h3 { margin-bottom: 12px; }
+.card-highlights { display: grid; gap: 12px; list-style: none; margin: 0; padding: 0; }
+.card-highlights li { border-left: 2px solid var(--green); color: var(--muted); font-size: .85rem; line-height: 1.5; padding-left: 14px; }
 .simulation-card h3 { font-size: 1.35rem; line-height: 1.2; margin-bottom: 14px; }
 .simulation-card p { color: var(--muted); font-size: .9rem; }
 .featured p { color: #b8c0ce; }
 .simulation-card > a { align-items: center; background: var(--blue); color: #fff; display: flex; font-size: .8rem; font-weight: 800; justify-content: space-between; margin-top: auto; min-height: 46px; padding: 0 14px; }
+.amber > a { background: var(--amber); }
+.red > a { background: var(--red); }
+.live > a { background: var(--green); }
 
 .capabilities-section { background: var(--ink); color: #fff; display: grid; gap: 72px; grid-template-columns: .8fr 1.2fr; padding-bottom: 100px; padding-top: 100px; }
 .capabilities-list { border-top: 1px solid #3e485b; }
@@ -145,6 +153,8 @@ footer p { color: var(--muted); margin: 0; }
   .company-logo { max-width: 190px; width: 56%; }
   .two-column, .section-heading, .history-band, .capabilities-section, .project-section, .faq-section, .contact-section { grid-template-columns: 1fr; }
   .achievement-grid, .simulation-grid, .team-grid { grid-template-columns: 1fr; }
+  .simulation-card.full { padding: 24px; }
+  .card-full-grid { gap: 24px; grid-template-columns: 1fr; }
   .achievement-grid article, .achievement-grid article:nth-child(3), .team-grid article, .team-grid article:first-child { border-left: 0; border-top: 1px solid var(--line); min-height: auto; padding: 28px 0; }
   .achievement-grid article:first-child, .team-grid article:first-child { border-top: 0; }
   .capabilities-list article { grid-template-columns: 32px 1fr; }
