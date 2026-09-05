@@ -179,15 +179,29 @@
      ========================================================================== */
   .cruce-svg{ width:100%; height:auto; display:block; }
 
+  /* ==========================================================================
+     TOPBAR (mismo patrón que v1.html / v2.html / v4.html)
+     ========================================================================== */
+  .topbar{
+    display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between;
+    padding:18px 22px; background:var(--panel); border:1px solid var(--border);
+    border-radius:14px; margin-bottom:16px;
+  }
+  .titulo{ display:flex; flex-direction:column; gap:2px; }
+  .titulo h1{ margin:0; font-size:1.15rem; font-weight:700; letter-spacing:.2px; }
+  .titulo span{ color:var(--muted); font-size:.8rem; }
+  .back-link{ color:var(--muted); font-size:.82rem; font-weight:700; text-decoration:none; }
+  .back-link:hover, .back-link:focus-visible{ color:var(--text); text-decoration:underline; text-underline-offset:4px; }
+
 </style>
 </head>
 <body>
-  
-  <a href="../index.html" style="position:fixed;top:12px;left:12px;z-index:999;padding:.5rem 1rem;background:#101827;color:#fff;border-radius:8px;text-decoration:none;">
-  ← Volver a Loop Nopal Solutions
-</a>
-  
 <div class="app">
+
+  <div class="topbar">
+    <a class="back-link" href="../index.html#simulaciones">← Volver al sitio</a>
+    <div class="titulo"><h1>V5 · Comparativa con eventos</h1><span>Loop Nopal Solutions</span></div>
+  </div>
 
   <!-- ========================================================================
        ENCABEZADO / DESCRIPCIÓN

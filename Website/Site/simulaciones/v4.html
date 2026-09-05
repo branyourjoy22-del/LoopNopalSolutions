@@ -42,6 +42,8 @@
   .titulo{ display:flex; flex-direction:column; gap:2px; }
   .titulo h1{ margin:0; font-size:1.15rem; font-weight:700; letter-spacing:.2px; }
   .titulo span{ color:var(--muted); font-size:.8rem; }
+  .back-link{ color:var(--muted); font-size:.82rem; font-weight:700; text-decoration:none; }
+  .back-link:hover, .back-link:focus-visible{ color:var(--text); text-decoration:underline; text-underline-offset:4px; }
   .reloj-wrap{ display:flex; align-items:center; gap:14px; }
   .reloj{ font-size:2rem; font-weight:600; letter-spacing:1px; }
   .badge{
@@ -178,6 +180,11 @@
 </head>
 <body>
 <div class="app">
+
+  <div class="topbar">
+    <a class="back-link" href="../index.html#simulaciones">← Volver al sitio</a>
+    <div class="titulo"><h1>Simulación comparativa</h1><span>Loop Nopal Solutions</span></div>
+  </div>
 
   <div class="sb-intro"><b>Simulación comparativa &middot; Plan actual vs. optimizado</b><br>Las dos corren con el mismo reloj y reciben exactamente los mismos vehículos simulados cada segundo; la única diferencia es el plan de fases del semáforo.</div>
 
