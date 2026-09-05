@@ -26,6 +26,7 @@
     --naranja: #ff8a3d;
     --azul-bus: #4ea1ff;
     --pico-glow: #ff8a3d;
+    color-scheme: dark;
   }
 
   /* ==========================================================================
@@ -375,6 +376,13 @@ const PARAMS = {
   praxedis_derecha:   {valle:0.015, pico:0.06, servicio:0.15, capacidad:5},
   praxedis_izquierda: {valle:0.010, pico:0.04, servicio:0.10, capacidad:2},
 };
+const PARAMS_BASE = {};
+for(const k in PARAMS) PARAMS_BASE[k] = Object.assign({}, PARAMS[k]);
+const NOMBRES_FASE_OPT = [
+  'F1 · Sombrerete (giro protegido)',
+  'F2 · Sombrerete + Metrobus',
+  'F3 · Calle 6 + Praxedis',
+];
 
 // ============================================================================
 // SECCIÓN 2 · PLANES DE SEMÁFORO
@@ -455,7 +463,8 @@ function construirAgendaOpt(duraciones){
   const tramo = (i)=>[[l[i],l[i]+duraciones[i],VERDE],[l[i]+duraciones[i],l[i+1],AMARILLO]];
   return {
     somb_n_izq: tramo(0),
-    somb_n_frente: tramo(1), somb_s_frente: tramo(1), metrobus_n: tramo(1), metrobus_s: tramo(1),
+    somb_n_frente: [[l[0], l[1]+duraciones[1], VERDE],[l[1]+duraciones[1], l[2], AMARILLO]],
+    somb_s_frente: tramo(1), metrobus_n: tramo(1), metrobus_s: tramo(1),
     calle6_frente: tramo(2), calle6_derecha: tramo(2), calle6_izquierda: tramo(2),
     praxedis_frente: tramo(2), praxedis_derecha: tramo(2), praxedis_izquierda: tramo(2),
   };
@@ -699,14 +708,481 @@ function crearMotorCompleto(cfg){
     horaInicialSeg = 6*3600,
   } = cfg;
 
+  let agendaViva = AGENDA;
+  let fasesVivas = FASES;
+  let cicloVivo = CICLO_TOTAL;
+
   const svg = document.getElementById(prefix+'schematic');
   svg.setAttribute('class','cruce-svg');
 
-  // [Rest of JavaScript code continues as in the original file]
-  // Note: The JavaScript code is very long and continues below
-  // Pasting the remaining code here would exceed practical limits
-  
+  svg.appendChild(crearSVG('rect',{x:0,y:0,width:400,height:400,fill:'#0e1114',rx:10}));
+  svg.appendChild(crearSVG('rect',{x:100,y:0,width:200,height:400,fill:'#262c33'}));
+  svg.appendChild(crearSVG('rect',{x:0,y:160,width:400,height:80,fill:'#262c33'}));
+  svg.appendChild(crearSVG('rect',{x:185,y:0,width:30,height:400,fill:'#33507a'}));
+
+  const defs = crearSVG('defs',{});
+  const patId = prefix+'hatch';
+  const pat = crearSVG('pattern',{id:patId, width:8, height:8, patternTransform:'rotate(45)', patternUnits:'userSpaceOnUse'});
+  pat.appendChild(crearSVG('rect',{width:8,height:8,fill:'#2b2f22'}));
+  pat.appendChild(crearSVG('rect',{width:3,height:8,fill:'#e8c14a',opacity:0.75}));
+  defs.appendChild(pat);
+  svg.appendChild(defs);
+  svg.appendChild(crearSVG('rect',{x:185,y:160,width:30,height:80,fill:'url(#'+patId+')'}));
+
+  const barraCola = {};
+  function agregarBarra(clave, cfgBarra){
+    const r = crearSVG('rect',{x:0,y:0,width:0,height:0,fill:'var(--verde)',opacity:0.55,rx:2});
+    svg.appendChild(r);
+    barraCola[clave] = {el:r, cfg:cfgBarra};
+  }
+  agregarBarra('somb_n_izq',    {dir:'abajo',     x:222, w:30, y0:240, max:150});
+  agregarBarra('somb_n_frente', {dir:'abajo',     x:264, w:30, y0:240, max:150});
+  agregarBarra('somb_s_frente', {dir:'arriba',    x:100, w:84, y0:160, max:150});
+  agregarBarra('metrobus_n',    {dir:'abajo',     x:185, w:30, y0:240, max:150});
+  agregarBarra('metrobus_s',    {dir:'arriba',    x:185, w:30, y0:160, max:150});
+  agregarBarra('calle6_frente',     {dir:'izquierda', y:212, h:12, x0:100, max:90});
+  agregarBarra('calle6_derecha',    {dir:'izquierda', y:198, h:12, x0:100, max:90});
+  agregarBarra('calle6_izquierda',  {dir:'izquierda', y:184, h:12, x0:100, max:90});
+  agregarBarra('praxedis_frente',   {dir:'derecha',   y:164, h:12, x0:300, max:90});
+  agregarBarra('praxedis_derecha',  {dir:'derecha',   y:178, h:12, x0:300, max:90});
+  agregarBarra('praxedis_izquierda',{dir:'derecha',   y:192, h:12, x0:300, max:90});
+
+  function actualizarBarra(clave, cola, capacidad){
+    const info = barraCola[clave];
+    if(!info) return;
+    const frac = Math.min(cola/(capacidad*1.5), 1);
+    const nivel = nivelCongestion(cola, capacidad);
+    const c = info.cfg;
+    const largo = frac*c.max;
+    info.el.setAttribute('fill', COLOR_NIVEL[nivel]);
+    if(c.dir==='abajo'){
+      info.el.setAttribute('x', c.x); info.el.setAttribute('width', c.w);
+      info.el.setAttribute('y', c.y0); info.el.setAttribute('height', largo);
+    } else if(c.dir==='arriba'){
+      info.el.setAttribute('x', c.x); info.el.setAttribute('width', c.w);
+      info.el.setAttribute('y', c.y0-largo); info.el.setAttribute('height', largo);
+    } else if(c.dir==='izquierda'){
+      info.el.setAttribute('y', c.y); info.el.setAttribute('height', c.h);
+      info.el.setAttribute('x', c.x0-largo); info.el.setAttribute('width', largo);
+    } else if(c.dir==='derecha'){
+      info.el.setAttribute('y', c.y); info.el.setAttribute('height', c.h);
+      info.el.setAttribute('x', c.x0); info.el.setAttribute('width', largo);
+    }
+  }
+
+  function raya(x1,y1,x2,y2,dashed){
+    svg.appendChild(crearSVG('line',{x1,y1,x2,y2,
+      stroke: dashed? '#ffffff40':'#e8c14a',
+      'stroke-width':2,
+      'stroke-dasharray': dashed? '11 9':'none',
+      opacity: dashed? 1:0.9}));
+  }
+  raya(142,0,142,160,true);  raya(142,240,142,400,true);
+  raya(258,0,258,160,true);  raya(258,240,258,400,true);
+  raya(184,0,184,160,false); raya(184,240,184,400,false);
+  raya(216,0,216,160,false); raya(216,240,216,400,false);
+  raya(100,0,100,160,false); raya(100,240,100,400,false);
+  raya(300,0,300,160,false); raya(300,240,300,400,false);
+  raya(0,200,100,200,false);
+  raya(300,180,400,180,true);
+  raya(300,200,400,200,false);
+  raya(300,220,400,220,true);
+
+  crosswalkH(svg,100,184,148,12); crosswalkH(svg,216,300,148,12);
+  crosswalkH(svg,100,184,240,12); crosswalkH(svg,216,300,240,12);
+  crosswalkV(svg,160,240,88,12);  crosswalkV(svg,160,240,300,12);
+
+  flechaVert(svg,121,70,132);  flechaVert(svg,163,70,132);
+  flechaVert(svg,237,132,72);  flechaVert(svg,279,132,72);
+  flechaVert(svg,121,270,332); flechaVert(svg,163,270,332);
+  flechaVert(svg,237,332,272); flechaVert(svg,279,332,272);
+  flechaVert(svg,200,65,140,0.65);
+  flechaVert(svg,200,335,260,0.65);
+  flechaHoriz(svg,180,78,22);
+  flechaHoriz(svg,220,22,78,0.35);
+  flechaHoriz(svg,170,378,322);      flechaHoriz(svg,190,378,322,0.55);
+  flechaHoriz(svg,210,322,378);      flechaHoriz(svg,230,322,378,0.55);
+
+  function etiqueta(x,y,texto,anchor){
+    const t = crearSVG('text',{x,y,fill:'#8b93a1','font-size':11,'font-family':'Space Grotesk, sans-serif','text-anchor':anchor||'middle'});
+    t.textContent = texto;
+    return t;
+  }
+  function etiquetaVert(x,y,texto){
+    const t = crearSVG('text',{x,y,fill:'#c7d6ee','font-size':9,'font-family':'Space Grotesk, sans-serif','text-anchor':'middle','letter-spacing':'1px',transform:'rotate(-90 '+x+' '+y+')'});
+    t.textContent = texto;
+    return t;
+  }
+  svg.appendChild(etiqueta(200,16,'Sombrerete \u2191 (norte)'));
+  svg.appendChild(etiqueta(200,394,'Sombrerete \u2193 (sur)'));
+  svg.appendChild(etiqueta(20,196,'Calle 6','start'));
+  svg.appendChild(etiqueta(380,196,'Praxedis Guerrero','end'));
+  svg.appendChild(etiquetaVert(200,45,'METROBUS'));
+  svg.appendChild(etiquetaVert(200,355,'METROBUS'));
+
+  const posSenal = {
+    somb_n_izq:    {x:237, y:236},
+    somb_n_frente: {x:279, y:236},
+    somb_s_frente: {x:142, y:164},
+    metrobus_n:    {x:200, y:236},
+    metrobus_s:    {x:200, y:164},
+    calle6:        {x:96,  y:220},
+    praxedis:      {x:304, y:180},
+  };
+  const circulosSenal = {};
+  for(const clave in posSenal){
+    const {x,y} = posSenal[clave];
+    circulosSenal[clave] = crearSemaforo(svg, x, y);
+  }
+
+  const tbody = document.querySelector('#'+prefix+'tablaMovs tbody');
+  const filas = {};
+  MOVIMIENTOS.forEach(([clave,etq])=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td><span class="luz-dot" id="'+prefix+'dot_'+clave+'"></span></td>'+
+      '<td>'+etq+'</td>'+
+      '<td class="mono" id="'+prefix+'estado_'+clave+'">ROJO</td>'+
+      '<td class="mono" id="'+prefix+'cola_'+clave+'">0</td>'+
+      '<td><span class="nivel" id="'+prefix+'nivel_'+clave+'">BAJO</span></td>';
+    tbody.appendChild(tr);
+    filas[clave] = {
+      dot: tr.querySelector('#'+prefix+'dot_'+clave),
+      estado: tr.querySelector('#'+prefix+'estado_'+clave),
+      cola: tr.querySelector('#'+prefix+'cola_'+clave),
+      nivel: tr.querySelector('#'+prefix+'nivel_'+clave),
+    };
+  });
+
+  let chart = null;
+  if(conChart){
+    chart = null;
+  }
+
+  let colas = nuevaColaCero();
+  let segDiaActual = horaInicialSeg;
+
+  const elReloj = document.getElementById(prefix+'reloj');
+  const elBadgePico = document.getElementById(prefix+'badgePico');
+  const elFaseTexto = document.getElementById(prefix+'faseTexto');
+  const elSegundoCiclo = document.getElementById(prefix+'segundoCiclo');
+
+  function claveSenal(clave){
+    return GRUPO_SENAL[clave] || clave;
+  }
+
+  function avanzarUnSegundo(arrivals){
+    const tCiclo = ((segDiaActual%cicloVivo)+cicloVivo)%cicloVivo;
+    for(const clave in PARAMS){
+      colas[clave]+=arrivals[clave];
+      if(estadoDe(agendaViva,clave,tCiclo)===VERDE) colas[clave]=Math.max(0,colas[clave]-PARAMS[clave].servicio);
+      colas[clave]=Math.min(colas[clave], PARAMS[clave].capacidad*3);
+    }
+    segDiaActual++;
+  }
+
+  function render(){
+    const tCiclo = ((segDiaActual%cicloVivo)+cicloVivo)%cicloVivo;
+    const pico = esHoraPico(segDiaActual);
+    if(elReloj) elReloj.textContent = hhmmss(segDiaActual);
+    if(elBadgePico){
+      elBadgePico.textContent = pico ? '\u{1F534} hora pico' : '\u{1F7E2} tráfico normal';
+      elBadgePico.className = 'badge' + (pico?' pico':'');
+    }
+    elFaseTexto.textContent = faseDe(fasesVivas, tCiclo);
+    elSegundoCiclo.textContent = tCiclo;
+    for(const clave in PARAMS){
+      const estado = estadoDe(agendaViva, clave, tCiclo);
+      const cola = colas[clave];
+      const nivel = nivelCongestion(cola, PARAMS[clave].capacidad);
+      const senal = claveSenal(clave);
+      if(circulosSenal[senal]) pintarSemaforo(circulosSenal[senal], estado);
+      actualizarBarra(clave, cola, PARAMS[clave].capacidad);
+      const f = filas[clave];
+      f.dot.style.background = COLOR_LUZ[estado];
+      f.estado.textContent = estado;
+      f.cola.textContent = Math.round(cola);
+      f.nivel.textContent = nivel;
+      f.nivel.style.background = COLOR_NIVEL[nivel];
+      f.nivel.style.color = (nivel==='BAJO') ? '#0d2417' : '#241a00';
+    }
+  }
+
+  function reset(horaSeg){
+    colas = nuevaColaCero();
+    segDiaActual = (horaSeg!==undefined)? horaSeg : horaInicialSeg;
+    agendaViva = AGENDA;
+    fasesVivas = FASES;
+    cicloVivo = CICLO_TOTAL;
+  }
+
+  function setAgendaReactiva(nuevaAgenda, nuevasFases, nuevoCiclo){
+    agendaViva = nuevaAgenda;
+    fasesVivas = nuevasFases;
+    if(nuevoCiclo) cicloVivo = nuevoCiclo;
+  }
+
+  if(conControles){
+    /* V5 usa el reloj compartido del bloque comparativo, no controles por motor. */
+  }
+
+  return {
+    avanzarUnSegundo, render, reset, setAgendaReactiva,
+    getSegDia: ()=>segDiaActual,
+    setSegDia: (s)=>{ segDiaActual = s; },
+    getColas: ()=>colas,
+  };
 }
+
+(function(){
+  "use strict";
+  const engA = crearMotorCompleto({prefix:'v4a_', AGENDA:AGENDA_ACTUAL, FASES:FASES_ACTUAL, CICLO_TOTAL:CICLO_ACTUAL, conChart:false, conControles:false, horaInicialSeg:6*3600});
+  const engB = crearMotorCompleto({prefix:'v4b_', AGENDA:AGENDA_OPT,    FASES:FASES_OPT,    CICLO_TOTAL:CICLO_OPT,    conChart:false, conControles:false, horaInicialSeg:6*3600});
+
+  let corriendo = true, velocidad = 60, ultimoTimestamp = null, acumulador = 0;
+  let segCompartido = 6*3600;
+  let sumaColaA=0, sumaColaB=0, muestras=0;
+  let segAltoA=0, segAltoB=0;
+  let sumaArribos=0;
+  let reducciones = {};
+  let incidentes = [];
+  let diaCargado = null;
+  const eventLog = document.getElementById('v4_eventLog');
+
+  function restaurarParams(){
+    for(const k in PARAMS_BASE){
+      PARAMS[k].servicio = PARAMS_BASE[k].servicio;
+      PARAMS[k].capacidad = PARAMS_BASE[k].capacidad;
+    }
+    reducciones = {};
+  }
+
+  function aplicarReduccion(mov){
+    reducciones[mov] = (reducciones[mov]||0)+1;
+    if(reducciones[mov]===1){
+      PARAMS[mov].servicio = PARAMS_BASE[mov].servicio * FACTOR_REDUCCION_INCIDENTE;
+      PARAMS[mov].capacidad = Math.max(1, PARAMS_BASE[mov].capacidad * FACTOR_REDUCCION_INCIDENTE);
+    }
+  }
+
+  function quitarReduccion(mov){
+    reducciones[mov] = Math.max(0, (reducciones[mov]||0)-1);
+    if(!reducciones[mov]){
+      PARAMS[mov].servicio = PARAMS_BASE[mov].servicio;
+      PARAMS[mov].capacidad = PARAMS_BASE[mov].capacidad;
+    }
+  }
+
+  function mensajeVacio(){
+    eventLog.innerHTML = '<div class="v4-event-entry" data-placeholder="1">Sin eventos todavía. Los incidentes, la detección y los cambios de plan aparecen aquí en vivo.</div>';
+  }
+
+  function registrarEvento(tipo, hora, titulo, detalle){
+    const placeholder = eventLog.querySelector('[data-placeholder="1"]');
+    if(placeholder) placeholder.remove();
+    const div = document.createElement('div');
+    div.className = 'v4-event-entry '+tipo;
+    div.innerHTML = '<span class="v4-event-time">'+hora+'</span> <span class="v4-event-tag">'+titulo+'</span>'+
+      (detalle ? '<div class="v4-event-detail">'+detalle+'</div>' : '');
+    eventLog.insertBefore(div, eventLog.firstChild);
+  }
+
+  function detalleReasignacion(info){
+    const filas = info.antes.map((antes,i)=>{
+      return NOMBRES_FASE_OPT[i]+': <span class="v4-diff-old">'+antes+'s</span> → <span class="v4-diff-new">'+info.despues[i]+'s</span>';
+    }).join('<br>');
+    return 'Movimiento: <b>'+ETIQUETA_MOV[info.movimiento]+'</b><br>'+
+      'Fase afectada: <b>'+NOMBRES_FASE_OPT[info.idxAfectada]+'</b>. '+
+      'Préstamo de <b>'+info.prestamo+' s</b> desde <b>'+NOMBRES_FASE_OPT[info.idxDonante]+'</b>.<br>'+filas;
+  }
+
+  function aplicarReasignacion(inc){
+    const plan = agendaConIncidente(inc.movimiento);
+    engB.setAgendaReactiva(plan.agenda, plan.fases, CICLO_OPT);
+    registrarEvento('reasignado', hhmmss(segCompartido), 'Plan optimizado reasignado', detalleReasignacion(plan.detalle));
+  }
+
+  function restaurarPlanBase(){
+    engB.setAgendaReactiva(AGENDA_OPT, FASES_OPT, CICLO_OPT);
+    registrarEvento('restaurado', hhmmss(segCompartido), 'Plan optimizado restaurado', 'Se vuelve al plan base de 120 s.');
+  }
+
+  function asegurarIncidentesDelDia(seg){
+    const dia = Math.floor(seg/86400);
+    if(dia===diaCargado) return;
+    diaCargado = dia;
+    const vigentes = incidentes.filter(i=>!i.finalizado);
+    incidentes = vigentes.concat(generarIncidentesDelDia(dia*86400).map(i=>Object.assign({ocurrio:false,detectado:false,finalizado:false}, i)));
+  }
+
+  function procesarIncidentesEn(seg){
+    asegurarIncidentesDelDia(seg);
+    for(const inc of incidentes){
+      if(!inc.ocurrio && seg>=inc.horaOcurre && seg<inc.horaFin){
+        inc.ocurrio = true;
+        aplicarReduccion(inc.movimiento);
+        registrarEvento('incidente', hhmmss(seg), 'Incidente en acceso',
+          'Toque/choque ligero en <b>'+ETIQUETA_MOV[inc.movimiento]+'</b>. Capacidad y servicio reducidos al 50% hasta las <b>'+hhmmss(inc.horaFin)+'</b>.');
+      }
+      if(!inc.detectado && seg>=inc.horaDetectado && seg<inc.horaFin){
+        inc.detectado = true;
+        registrarEvento('detectado', hhmmss(seg), 'Incidente detectado',
+          'Cámara / reporte tipo Waze confirma el percance en <b>'+ETIQUETA_MOV[inc.movimiento]+'</b>.');
+        aplicarReasignacion(inc);
+      }
+      if(!inc.finalizado && seg>=inc.horaFin){
+        inc.finalizado = true;
+        if(inc.ocurrio) quitarReduccion(inc.movimiento);
+        registrarEvento('fin-incidente', hhmmss(seg), 'Fin del incidente',
+          'Se libera <b>'+ETIQUETA_MOV[inc.movimiento]+'</b> y se restablece su capacidad.');
+        const otro = incidentes.find(i=>i.detectado && !i.finalizado);
+        if(otro) aplicarReasignacion(otro);
+        else if(inc.detectado) restaurarPlanBase();
+      }
+    }
+  }
+
+  function contarAlto(colas){
+    let n=0;
+    for(const clave in PARAMS){
+      const nivel = nivelCongestion(colas[clave], PARAMS[clave].capacidad);
+      if(nivel==='ALTO'||nivel==='SATURADO') n++;
+    }
+    return n;
+  }
+
+  function avanzarUnSegundoCompartido(){
+    procesarIncidentesEn(segCompartido);
+    const arrivals = muestrearArribos(segCompartido);
+    engA.avanzarUnSegundo(arrivals);
+    engB.avanzarUnSegundo(arrivals);
+    segCompartido++;
+    const colasA = engA.getColas(), colasB = engB.getColas();
+    const totalA = Object.values(colasA).reduce((a,b)=>a+b,0);
+    const totalB = Object.values(colasB).reduce((a,b)=>a+b,0);
+    sumaColaA += totalA; sumaColaB += totalB; muestras++;
+    segAltoA += contarAlto(colasA); segAltoB += contarAlto(colasB);
+    sumaArribos += Object.values(arrivals).reduce((a,b)=>a+b,0);
+  }
+
+  const elReloj = document.getElementById('v4_reloj');
+  const elBadge = document.getElementById('v4_badgePico');
+
+  function fmtPct(a,b){
+    if(a<=0.0001) return '\u2014';
+    const pct = ((a-b)/a)*100;
+    const signo = pct>=0 ? '\u25BC' : '\u25B2';
+    return signo+' '+Math.abs(pct).toFixed(0)+'%';
+  }
+
+  function pintarDelta(id, a, b){
+    const el = document.getElementById(id);
+    el.textContent = fmtPct(a,b);
+    el.classList.remove('mejor','peor');
+    el.classList.add(b<=a? 'mejor':'peor');
+  }
+
+  function renderScoreboard(){
+    const colasA = engA.getColas(), colasB = engB.getColas();
+    const totalA = Object.values(colasA).reduce((a,b)=>a+b,0);
+    const totalB = Object.values(colasB).reduce((a,b)=>a+b,0);
+    const promA = muestras? sumaColaA/muestras : 0;
+    const promB = muestras? sumaColaB/muestras : 0;
+
+    document.getElementById('v4_sb1_actual').textContent = totalA.toFixed(1);
+    document.getElementById('v4_sb1_opt').textContent = totalB.toFixed(1);
+    pintarDelta('v4_sb1_delta', totalA, totalB);
+
+    document.getElementById('v4_sb2_actual').textContent = promA.toFixed(1);
+    document.getElementById('v4_sb2_opt').textContent = promB.toFixed(1);
+    pintarDelta('v4_sb2_delta', promA, promB);
+
+    document.getElementById('v4_sb3_actual').textContent = segAltoA+' s';
+    document.getElementById('v4_sb3_opt').textContent = segAltoB+' s';
+    pintarDelta('v4_sb3_delta', segAltoA, segAltoB);
+
+    const lambda = muestras? sumaArribos/muestras : 0;
+    const esperaA = lambda>0.0001 ? promA/lambda : 0;
+    const esperaB = lambda>0.0001 ? promB/lambda : 0;
+    document.getElementById('v4_sb4_actual').textContent = esperaA.toFixed(1)+' s';
+    document.getElementById('v4_sb4_opt').textContent = esperaB.toFixed(1)+' s';
+    pintarDelta('v4_sb4_delta', esperaA, esperaB);
+  }
+
+  function renderTodo(){
+    const pico = esHoraPico(segCompartido);
+    elReloj.textContent = hhmmss(segCompartido);
+    elBadge.textContent = pico? '\u{1F534} hora pico':'\u{1F7E2} tráfico normal';
+    elBadge.className = 'badge'+(pico?' pico':'');
+    engA.render(); engB.render();
+    renderScoreboard();
+  }
+
+  function tick(timestamp){
+    if(ultimoTimestamp===null) ultimoTimestamp=timestamp;
+    const dtReal = (timestamp-ultimoTimestamp)/1000;
+    ultimoTimestamp = timestamp;
+    if(corriendo){
+      acumulador += dtReal*velocidad;
+      let pasos=0;
+      while(acumulador>=1 && pasos<5000){ avanzarUnSegundoCompartido(); acumulador-=1; pasos++; }
+    }
+    renderTodo();
+    requestAnimationFrame(tick);
+  }
+
+  function saltarA(horaStr){
+    const [h,m] = horaStr.split(':').map(Number);
+    let objetivo = h*3600+m*60;
+    let diaBase = Math.floor(segCompartido/86400)*86400;
+    let destino = diaBase+objetivo;
+    if(destino<=segCompartido) destino += 86400;
+    while(segCompartido<destino){ avanzarUnSegundoCompartido(); }
+    renderTodo();
+  }
+
+  function reiniciarMotores(){
+    const horaInicio = document.getElementById('v4_horaInicio').value || '06:00';
+    const [h,m] = horaInicio.split(':').map(Number);
+    segCompartido = h*3600+m*60;
+    restaurarParams();
+    engA.reset(segCompartido); engB.reset(segCompartido);
+    sumaColaA=0; sumaColaB=0; muestras=0; segAltoA=0; segAltoB=0; sumaArribos=0;
+    incidentes = [];
+    diaCargado = null;
+    mensajeVacio();
+    asegurarIncidentesDelDia(segCompartido);
+    renderTodo();
+  }
+
+  document.getElementById('v4_btnPlay').addEventListener('click', function(){
+    corriendo=!corriendo;
+    this.textContent = corriendo? '\u23F8 Pausar':'\u25B6 Reanudar';
+    this.classList.toggle('activo', corriendo);
+  });
+  document.getElementById('v4_velocidad').addEventListener('change', function(){ velocidad = Number(this.value); });
+  document.getElementById('v4_btnPico1').addEventListener('click', ()=>saltarA('07:00'));
+  document.getElementById('v4_btnPico2').addEventListener('click', ()=>saltarA('17:00'));
+  document.getElementById('v4_btnReiniciar').addEventListener('click', reiniciarMotores);
+  document.getElementById('v4_btnForzarIncidente').addEventListener('click', function(){
+    const mov = MOVS_CON_RIESGO_INCIDENTE[Math.floor(Math.random()*MOVS_CON_RIESGO_INCIDENTE.length)];
+    const horaOcurre = segCompartido;
+    incidentes.push({
+      movimiento: mov,
+      horaOcurre,
+      horaDetectado: horaOcurre + 45,
+      horaFin: horaOcurre + 20*60,
+      ocurrio:false, detectado:false, finalizado:false
+    });
+    procesarIncidentesEn(segCompartido);
+    renderTodo();
+  });
+
+  mensajeVacio();
+  asegurarIncidentesDelDia(segCompartido);
+  renderTodo();
+  requestAnimationFrame(tick);
+})();
 </script>
 </body>
 </html>
