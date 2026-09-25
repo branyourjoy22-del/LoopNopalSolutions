@@ -1,4 +1,4 @@
-ddr---
+---
 description: "Compile and execute the PlatformIO firmware for the ESP32-C3 Supermini"
 name: "Compile and Execute Firmware"
 argument-hint: "Optional upload port or execution detail"
