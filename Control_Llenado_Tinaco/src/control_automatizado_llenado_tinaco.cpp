@@ -1,5 +1,5 @@
 /*
-  Control automatizado de llenado del tinaco — ESP32-C3 Supermini
+  Llenado de tinaco — ESP32-C3
   Proyecto: Loop Nopal Solutions
 
   Lógica (ver diagrama de flujo):
