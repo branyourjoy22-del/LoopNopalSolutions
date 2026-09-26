@@ -1,4 +1,25 @@
+#if defined(__has_include)
+#if __has_include(<Arduino.h>)
 #include <Arduino.h>
+#else
+using uint8_t = unsigned char;
+enum : uint8_t { LOW = 0, HIGH = 1, OUTPUT = 1 };
+void pinMode(uint8_t pin, uint8_t mode);
+void digitalWrite(uint8_t pin, uint8_t value);
+void delay(unsigned long milliseconds);
+
+class HardwareSerial
+{
+public:
+    void begin(unsigned long baud);
+    void println(const char *message);
+};
+
+extern HardwareSerial Serial;
+#endif
+#else
+#include <Arduino.h>
+#endif
 
 #define LED_PIN 8
 
