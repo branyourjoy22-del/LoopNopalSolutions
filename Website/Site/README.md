@@ -9,22 +9,6 @@ JavaScript para su motor de incidentes en tiempo real.
 Abre `index.html` directamente en un navegador. No requiere instalación,
 compilación, servidor ni dependencias de Node.
 
-## Archivos principales
-
-```text
-index.html
-styles.css
-.claude/
-  hosting.json
-public/qro-aerea-cristian-gonzalez.jpg
-public/loop-nopal-logo-transparent.png
-simulaciones/
-  simulaciones.css
-  v1.html
-  v2.html
-  v4.html
-  Simulacion_visual_v5_event_log.html
-```
 
 ## Alcance de las simulaciones
 
